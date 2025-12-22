@@ -5,6 +5,8 @@ import { StoreInitializer } from "@/components/StoreInitializer";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
+import { Providers } from "@/components/Providers";
+
 const kanit = Kanit({
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["thai", "latin"],
@@ -23,15 +25,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th">
-      <body
-        className={`${kanit.variable} font-sans antialiased bg-background text-foreground flex flex-col min-h-screen`}
-      >
-        <Navbar />
-        <StoreInitializer />
-        <main className="flex-1 w-full">
-          {children}
-        </main>
-        <Footer />
+      <body className={`${kanit.variable} font-sans antialiased bg-gray-50 text-gray-900 flex flex-col min-h-screen`}>
+        <Providers>
+          <Navbar />
+          <StoreInitializer />
+          <main className="flex-1 w-full">
+            {children}
+          </main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
