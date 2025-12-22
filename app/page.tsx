@@ -7,8 +7,16 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
+import { useEffect } from "react";
+
 export default function Home() {
-  const { series } = useStore();
+  const { series, fetchData } = useStore();
+
+  useEffect(() => {
+    if (series.length === 0) {
+      fetchData();
+    }
+  }, [fetchData, series.length]);
   const trendingSeries = series.filter(s => s.isTrending).slice(0, 5);
 
   return (

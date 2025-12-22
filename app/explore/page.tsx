@@ -7,8 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
+import { useEffect } from "react";
+
 export default function ExplorePage() {
-    const { series } = useStore();
+    const { series, fetchData } = useStore();
+
+    useEffect(() => {
+        if (series.length === 0) {
+            fetchData();
+        }
+    }, [fetchData, series.length]);
     const [searchTerm, setSearchTerm] = useState("");
 
     const filteredSeries = series.filter(s =>

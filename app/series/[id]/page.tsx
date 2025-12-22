@@ -13,9 +13,15 @@ import Image from "next/image";
 
 export default function SeriesDetailPage() {
     const params = useParams();
-    const { series, getLocationsBySeries } = useStore();
+    const { series, getLocationsBySeries, fetchData } = useStore();
     const [activeSeries, setActiveSeries] = useState<any>(null);
     const [locations, setLocations] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (series.length === 0) {
+            fetchData();
+        }
+    }, [series.length, fetchData]);
 
     useEffect(() => {
         if (params.id) {
