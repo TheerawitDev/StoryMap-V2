@@ -27,7 +27,10 @@ export function Sidebar() {
     };
 
     return (
-        <div className="absolute left-4 top-4 bottom-4 w-96 flex flex-col gap-4 p-4 rounded-xl border border-white/10 bg-black/60 backdrop-blur-xl shadow-2xl z-[1000] text-white overflow-hidden transition-all duration-300">
+        <div className="absolute transition-all duration-300 z-[1000] flex flex-col gap-4 p-4 border border-white/10 bg-black/60 backdrop-blur-xl shadow-2xl text-white overflow-hidden
+            w-full h-[45vh] bottom-0 left-0 right-0 rounded-t-xl rounded-b-none border-b-0
+            md:w-96 md:h-auto md:top-4 md:bottom-4 md:left-4 md:right-auto md:rounded-xl md:border-b"
+        >
 
             {/* Header */}
             <div className="flex items-center gap-2 mb-2 shrink-0">

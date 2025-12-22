@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="pb-20">
       {/* Hero Section */}
-      <section className="relative h-[500px] flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
+      <section className="relative min-h-[500px] flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden py-20 md:py-0">
         <div className="container px-4 text-center z-10">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gray-900 tracking-tight">
             ตามรอยฉากโปรดของคุณไป<br />
@@ -81,8 +81,8 @@ export default function Home() {
       {/* Featured Locations Preview */}
       <section className="container mx-auto px-4 mt-20">
         <h2 className="text-3xl font-bold text-gray-900 mb-8">สถานที่ไฮไลท์</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-[400px]">
-          <div className="relative rounded-2xl overflow-hidden group cursor-pointer">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:h-[400px]">
+          <div className="relative rounded-2xl overflow-hidden group cursor-pointer h-[300px] md:h-full">
             <Image
               src="/images/wat-chaiwatthanaram.jpg"
               alt="Ayutthaya"
@@ -96,7 +96,7 @@ export default function Home() {
               <p className="text-gray-200">ตามรอยบุพเพสันนิวาสและพรหมลิขิต ย้อนเวลาสู่อดีตที่งดงาม</p>
             </div>
           </div>
-          <div className="grid grid-rows-2 gap-6">
+          <div className="grid grid-rows-2 gap-6 h-[400px] md:h-full">
             <div className="relative rounded-2xl overflow-hidden cursor-pointer group">
               <Image
                 src="/images/phuket-old-town.jpg"
