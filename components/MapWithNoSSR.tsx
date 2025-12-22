@@ -8,6 +8,6 @@ const Map = dynamic(() => import("./Map"), {
     loading: () => <div className="h-full w-full flex items-center justify-center bg-zinc-900 text-white">Loading Map...</div>
 });
 
-export default function MapWithNoSSR() {
-    return <Map />;
+export default function MapWithNoSSR(props: any) {
+    return <Map {...props} />;
 }
