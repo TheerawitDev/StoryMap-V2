@@ -51,8 +51,11 @@ export const useStore = create<StoreState>((set, get) => ({
                 fetch('/api/locations')
             ]);
 
-            if (!seriesRes.ok || !locationsRes.ok) {
-                throw new Error('Failed to fetch data');
+            if (!seriesRes.ok) {
+                throw new Error(`Series API Failed: ${seriesRes.status} ${seriesRes.statusText}`);
+            }
+            if (!locationsRes.ok) {
+                throw new Error(`Locations API Failed: ${locationsRes.status} ${locationsRes.statusText}`);
             }
 
             const seriesData = await seriesRes.json();

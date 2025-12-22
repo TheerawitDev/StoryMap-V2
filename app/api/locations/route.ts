@@ -28,6 +28,7 @@ export async function GET(request: Request) {
 
         return NextResponse.json(formattedLocations);
     } catch (error) {
+        console.error("API Locations Error:", error);
         return NextResponse.json({ error: "Failed to fetch locations" }, { status: 500 });
     }
 }

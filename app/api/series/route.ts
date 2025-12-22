@@ -26,6 +26,7 @@ export async function GET() {
 
         return NextResponse.json(formattedSeries);
     } catch (error) {
+        console.error("API Series Error:", error);
         return NextResponse.json({ error: "Failed to fetch series" }, { status: 500 });
     }
 }
