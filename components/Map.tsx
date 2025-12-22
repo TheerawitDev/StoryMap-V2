@@ -1,26 +1,16 @@
-
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 import { useStore } from "@/store/useStore";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import L from "leaflet";
 
 // Fix Leaflet's default icon path issues in Next.js
+// We do not call L.icon() here to prevent SSR window reference error
 const iconUrl = "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png";
 const iconRetinaUrl = "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png";
 const shadowUrl = "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png";
-
-const customIcon = L.icon({
-    iconUrl: iconUrl,
-    iconRetinaUrl: iconRetinaUrl,
-    shadowUrl: shadowUrl,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-});
 
 // Component to handle map interactions (e.g., zooming to selected location)
 function MapController() {
@@ -46,6 +36,19 @@ interface MapProps {
 
 export default function Map({ center, zoom, locations: propLocations, interactive = true }: MapProps) {
     const { locations: storeLocations, series } = useStore();
+
+    // Create icon inside component to ensure window exists (though import L should be safe in v1.9)
+    const customIcon = useMemo(() => {
+        return L.icon({
+            iconUrl: iconUrl,
+            iconRetinaUrl: iconRetinaUrl,
+            shadowUrl: shadowUrl,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+        });
+    }, []);
 
     // Use props if provided, otherwise default to store
     const locationsToRender = propLocations || storeLocations;

@@ -14,12 +14,11 @@ import { MapPin, Upload, Loader2, ArrowLeft } from "lucide-react";
 import dynamic from "next/dynamic";
 import { LatLngTuple } from "leaflet";
 import Link from "next/link";
-import L from "leaflet";
-
 // Dynamic import for Map to avoid SSR issues
 const Map = dynamic(
-    () => import("react-leaflet").then((mod) => {
-        const { MapContainer, TileLayer, Marker, useMapEvents } = mod;
+    async () => {
+        const L = (await import("leaflet")).default;
+        const { MapContainer, TileLayer, Marker, useMapEvents } = await import("react-leaflet");
 
         // Component to handle map clicks
         const LocationPicker = ({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) => {
@@ -47,7 +46,7 @@ const Map = dynamic(
                 </MapContainer>
             );
         };
-    }),
+    },
     { ssr: false, loading: () => <div className="w-full h-full bg-gray-100 animate-pulse flex items-center justify-center">Loading Map...</div> }
 );
 
