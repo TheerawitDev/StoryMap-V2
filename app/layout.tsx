@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Kanit } from "next/font/google";
 import "./globals.css";
+import { StoreInitializer } from "@/components/StoreInitializer";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -26,6 +27,7 @@ export default function RootLayout({
         className={`${kanit.variable} font-sans antialiased bg-background text-foreground flex flex-col min-h-screen`}
       >
         <Navbar />
+        <StoreInitializer />
         <main className="flex-1 w-full">
           {children}
         </main>

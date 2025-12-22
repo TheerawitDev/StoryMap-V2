@@ -56,7 +56,12 @@ export function LocationCard({ location, seriesTitle }: LocationCardProps) {
                             {visited ? "เยี่ยมชมแล้ว (Visited)" : "เช็คอิน (Check In)"}
                         </Button>
 
-                        <Button variant="ghost" size="sm" className="ml-auto text-gray-500 hover:text-primary">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="ml-auto text-gray-500 hover:text-primary"
+                            onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${location.coords}`, '_blank')}
+                        >
                             <Navigation className="w-4 h-4 mr-1" />
                             นำทาง
                         </Button>

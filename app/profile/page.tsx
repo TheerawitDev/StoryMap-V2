@@ -1,27 +1,35 @@
 
-"use client";
-
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { User, MapPin, CheckCircle, Settings, LogOut } from "lucide-react";
+import { Settings, LogOut, MapPin, Plus } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
-export default function ProfilePage() {
-    // Mock Data for Profile
-    const stats = {
-        visited: 2,
-        saved: 1,
-        total: 64,
-        progress: 3.1
-    };
+export default async function ProfilePage() {
+    const session = await auth();
 
-    const visitedLocations = [
-        { id: 1002, name: "วัดพุทไธศวรรย์", series: "บุพเพสันนิวาส (Love Destiny)", rating: 5 },
-        { id: 2002, name: "ตลาดน้อย - ชุมชนจีนเก่า", series: "สี่แผ่นดิน", rating: 5 }
-    ];
+    if (!session || !session.user?.email) {
+        redirect("/login");
+    }
 
-    const savedLocations = [
-        { id: 29003, name: "โจ้ก อาม่า", series: "หลานม่า" }
-    ];
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        include: {
+            locations: {
+                orderBy: { createdAt: 'desc' },
+                include: { series: true }
+            }
+        }
+    });
 
+    if (!user) {
+        return <div>User not found</div>;
+    }
+
+    const createdLocations = user.locations;
 
     return (
         <div className="bg-gray-50 min-h-screen pb-20 pt-8">
@@ -30,81 +38,92 @@ export default function ProfilePage() {
 
                 {/* Profile Header Card */}
                 <div className="bg-white rounded-2xl p-8 shadow-sm border mb-8">
-                    <div className="flex items-center gap-4 mb-8">
-                        <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-primary">
-                            <User className="w-8 h-8" />
+                    <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
+                        <div className="relative">
+                            <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
+                                <AvatarImage src={user.image || ""} alt={user.name || ""} />
+                                <AvatarFallback className="bg-primary/10 text-primary text-2xl font-bold">
+                                    {user.name?.charAt(0).toUpperCase() || "U"}
+                                </AvatarFallback>
+                            </Avatar>
                         </div>
-                        <div>
-                            <h2 className="text-2xl font-bold text-gray-900">ผู้เยี่ยมชม</h2>
-                            <p className="text-sm text-gray-500">ข้อมูลจัดเก็บในเครื่อง (Local Storage)</p>
+
+                        <div className="text-center md:text-left flex-1">
+                            <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
+                            <p className="text-gray-500">{user.email}</p>
+                            <div className="mt-2 flex items-center justify-center md:justify-start gap-2">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    สมาชิกทั่วไป
+                                </span>
+                            </div>
                         </div>
-                        <div className="ml-auto flex gap-2">
-                            <Button variant="outline" size="icon">
-                                <Settings className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600 hover:bg-red-50">
-                                <LogOut className="w-4 h-4" />
-                            </Button>
+
+                        <div className="flex gap-2">
+                            <Link href="/submit">
+                                <Button className="gap-2">
+                                    <Plus className="w-4 h-4" /> เพิ่มสถานที่
+                                </Button>
+                            </Link>
                         </div>
                     </div>
 
-                    <h3 className="font-bold text-gray-900 mb-4">ภาพรวมความคืบหน้า</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="bg-blue-50 p-6 rounded-xl text-center border border-blue-100">
-                            <div className="text-3xl font-bold text-primary mb-1">{stats.visited}</div>
-                            <div className="text-sm text-gray-600 font-medium">สถานที่ที่เยี่ยมชมแล้ว</div>
+                            <div className="text-3xl font-bold text-primary mb-1">{createdLocations.length}</div>
+                            <div className="text-sm text-gray-600 font-medium">สถานที่ที่แนะนำ (Submitted)</div>
                         </div>
-                        <div className="bg-blue-50 p-6 rounded-xl text-center border border-blue-100">
-                            <div className="text-3xl font-bold text-primary mb-1">{stats.saved}</div>
-                            <div className="text-sm text-gray-600 font-medium">บันทึกส่วนตัว</div>
-                        </div>
-                        <div className="bg-gray-50 p-6 rounded-xl text-center border border-gray-200">
-                            <div className="text-3xl font-bold text-gray-700 mb-1">{stats.total}</div>
-                            <div className="text-sm text-gray-600 font-medium">สถานที่ทั้งหมด</div>
+                        {/* Placeholder for future features */}
+                        <div className="bg-gray-50 p-6 rounded-xl text-center border border-gray-100">
+                            <div className="text-3xl font-bold text-gray-400 mb-1">0</div>
+                            <div className="text-sm text-gray-500 font-medium">เช็คอิน (Coming Soon)</div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Progress Bar */}
-                    <div className="relative pt-1">
-                        <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-blue-200">
-                            <div style={{ width: "3.1%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"></div>
-                        </div>
-                        <div className="text-center text-xs text-primary font-bold">ความคืบหน้ารวม: 3.1%</div>
+                {/* Submitted Locations Section */}
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    สถานที่ที่คุณแนะนำ ({createdLocations.length})
+                </h2>
+
+                {createdLocations.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        {createdLocations.map((loc) => (
+                            <div key={loc.id} className="bg-white p-4 rounded-xl border shadow-sm flex gap-4 hover:shadow-md transition-shadow">
+                                <div className="w-24 h-24 bg-gray-100 rounded-lg shrink-0 relative overflow-hidden">
+                                    <Image
+                                        src={loc.image || "/images/placeholder.jpg"}
+                                        alt={loc.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="font-bold text-gray-900 truncate">{loc.name}</h4>
+                                    <p className="text-xs text-primary font-medium mb-1 truncate">{loc.series.title}</p>
+                                    <p className="text-xs text-gray-500 line-clamp-2">{loc.description}</p>
+
+                                    <div className="mt-2 flex items-center gap-2">
+                                        <Link href={`/explore?seriesId=${loc.seriesId}`} className="text-xs text-gray-400 hover:text-primary hover:underline">
+                                            ดูในแผนที่
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                </div>
-
-                {/* Visited Section */}
-                <h2 className="text-xl font-bold text-gray-900 mb-4">สถานที่ที่เยี่ยมชมแล้ว ({stats.visited})</h2>
-                <div className="space-y-4 mb-8">
-                    {visitedLocations.map((loc) => (
-                        <div key={loc.id} className="bg-white p-4 rounded-xl border flex items-center justify-between shadow-sm">
-                            <div>
-                                <h4 className="font-bold text-gray-900">{loc.name}</h4>
-                                <p className="text-xs text-gray-500">จาก: {loc.series}</p>
-                            </div>
-                            <div className="flex items-center gap-1 text-yellow-500">
-                                <span className="text-sm font-bold">★ {loc.rating}</span>
-                            </div>
+                ) : (
+                    <div className="text-center py-12 bg-white rounded-xl border border-dashed border-gray-200">
+                        <div className="bg-gray-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <MapPin className="w-6 h-6 text-gray-400" />
                         </div>
-                    ))}
-                </div>
-
-                {/* Saved Section */}
-                <h2 className="text-xl font-bold text-gray-900 mb-4">สถานที่ที่พร้อมบันทึกส่วนตัว ({stats.saved})</h2>
-                <div className="space-y-4">
-                    {savedLocations.map((loc) => (
-                        <div key={loc.id} className="bg-white p-4 rounded-xl border shadow-sm">
-                            <div className="mb-2">
-                                <h4 className="font-bold text-gray-900">{loc.name}</h4>
-                                <p className="text-xs text-gray-500">จาก: {loc.series}</p>
-                            </div>
-                            <div className="p-3 bg-gray-50 rounded-lg text-sm text-gray-500 italic border border-gray-100">
-                                " hello world "
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
+                        <h3 className="font-medium text-gray-900 mb-1">ยังไม่มีสถานที่ที่แนะนำ</h3>
+                        <p className="text-gray-500 text-sm mb-4">คุณรูจักสถานที่ถ่ายทำเจ๋งๆ ไหม? แชร์ให้เพื่อนๆ รู้สิ!</p>
+                        <Link href="/submit">
+                            <Button variant="outline">เริ่มแบ่งปันสถานที่</Button>
+                        </Link>
+                    </div>
+                )}
             </div>
         </div>
     );

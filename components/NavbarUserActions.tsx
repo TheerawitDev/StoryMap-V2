@@ -59,6 +59,12 @@ export function NavbarUserActions({ user }: UserActionsProps) {
                         <span>โปรไฟล์ของฉัน</span>
                     </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/submit" className="cursor-pointer">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>เพิ่มสถานที่ใหม่</span>
+                    </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     className="text-red-600 cursor-pointer"

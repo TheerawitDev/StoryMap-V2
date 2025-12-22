@@ -9,7 +9,7 @@ import Image from "next/image";
 
 export default function Home() {
   const { series } = useStore();
-  const trendingSeries = series.filter(s => s.isTrending).slice(0, 4);
+  const trendingSeries = series.filter(s => s.isTrending).slice(0, 5);
 
   return (
     <div className="pb-20">
@@ -71,7 +71,7 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {trendingSeries.map((s) => (
             <SeriesCard key={s.id} series={s} />
           ))}
