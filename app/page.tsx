@@ -10,14 +10,18 @@ import Image from "next/image";
 import { useEffect } from "react";
 
 export default function Home() {
-  const { series, fetchData } = useStore();
+  const { series, fetchData, isLoading, error } = useStore();
 
   useEffect(() => {
     if (series.length === 0) {
       fetchData();
     }
   }, [fetchData, series.length]);
+
   const trendingSeries = series.filter(s => s.isTrending).slice(0, 5);
+
+  if (isLoading) return <div className="p-20 text-center text-lg">Loading Series Data...</div>;
+  if (error) return <div className="p-20 text-center text-red-500">Error: {error}</div>;
 
   return (
     <div className="pb-20">
