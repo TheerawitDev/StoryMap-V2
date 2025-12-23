@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, MapPin, Plus } from "lucide-react";
+import { Settings, LogOut, MapPin, Plus, Film } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AchievementsList } from "@/components/AchievementsList";
@@ -62,6 +62,11 @@ export default async function ProfilePage() {
                         </div>
 
                         <div className="flex gap-2">
+                            <Link href="/submit-series">
+                                <Button className="gap-2 bg-purple-600 hover:bg-purple-700">
+                                    <Film className="w-4 h-4" /> เพิ่มซีรีส์
+                                </Button>
+                            </Link>
                             <Link href="/submit">
                                 <Button className="gap-2">
                                     <Plus className="w-4 h-4" /> เพิ่มสถานที่

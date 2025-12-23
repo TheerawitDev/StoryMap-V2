@@ -30,3 +30,35 @@ export async function GET() {
         return NextResponse.json({ error: "Failed to fetch series" }, { status: 500 });
     }
 }
+
+import { auth } from "@/auth";
+
+export async function POST(req: Request) {
+    try {
+        const session = await auth();
+        if (!session || !session.user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const body = await req.json();
+        const { title, description, poster, isTrending } = body;
+
+        if (!title || !description) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        const newSeries = await prisma.series.create({
+            data: {
+                title,
+                description,
+                poster: poster || "/images/placeholder.jpg",
+                isTrending: isTrending || false,
+            },
+        });
+
+        return NextResponse.json(newSeries, { status: 201 });
+    } catch (error) {
+        console.error("API Create Series Error:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+}
