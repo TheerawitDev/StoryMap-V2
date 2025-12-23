@@ -24,9 +24,9 @@ export function Footer() {
                     <div>
                         <h4 className="font-bold mb-4 text-sm uppercase tracking-wide">สำรวจ</h4>
                         <ul className="space-y-2 text-sm text-gray-500">
-                            <li><Link href="#" className="hover:text-primary">ซีรีส์ยอดนิยม</Link></li>
-                            <li><Link href="#" className="hover:text-primary">สถานที่สำคัญ</Link></li>
-                            <li><Link href="#" className="hover:text-primary">เพิ่มซีรีส์ของคุณ</Link></li>
+                            <li><Link href="/explore" className="hover:text-primary">ซีรีส์ยอดนิยม</Link></li>
+                            <li><Link href="/places" className="hover:text-primary">สถานที่สำคัญ</Link></li>
+                            <li><Link href="/submit-series" className="hover:text-primary">เพิ่มซีรีส์ของคุณ</Link></li>
                         </ul>
                     </div>
 
@@ -34,8 +34,8 @@ export function Footer() {
                     <div>
                         <h4 className="font-bold mb-4 text-sm uppercase tracking-wide">บริษัท</h4>
                         <ul className="space-y-2 text-sm text-gray-500">
-                            <li><Link href="#" className="hover:text-primary">เกี่ยวกับเรา</Link></li>
-                            <li><Link href="#" className="hover:text-primary">ร่วมงานกับเรา</Link></li>
+                            <li><Link href="/about" className="hover:text-primary">เกี่ยวกับเรา</Link></li>
+                            <li><Link href="/about" className="hover:text-primary">ร่วมงานกับเรา</Link></li>
                             <li><Link href="#" className="hover:text-primary">ความเป็นส่วนตัว</Link></li>
                         </ul>
                     </div>
@@ -44,9 +44,9 @@ export function Footer() {
                     <div>
                         <h4 className="font-bold mb-4 text-sm uppercase tracking-wide">สนับสนุน</h4>
                         <ul className="space-y-2 text-sm text-gray-500">
-                            <li><Link href="#" className="hover:text-primary">ติดต่อเรา</Link></li>
-                            <li><Link href="#" className="hover:text-primary">คำถามที่พบบ่อย</Link></li>
-                            <li><Link href="#" className="hover:text-primary">ให้ข้อเสนอแนะ</Link></li>
+                            <li><Link href="/contact" className="hover:text-primary">ติดต่อเรา</Link></li>
+                            <li><Link href="/faq" className="hover:text-primary">คำถามที่พบบ่อย</Link></li>
+                            <li><Link href="/contact" className="hover:text-primary">ให้ข้อเสนอแนะ</Link></li>
                         </ul>
                     </div>
                 </div>
