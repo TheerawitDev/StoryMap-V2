@@ -33,6 +33,8 @@ interface StoreState {
     setSelectedSeries: (series: Series | null) => void;
     setSelectedLocation: (location: Location | null) => void;
     getLocationsBySeries: (seriesId: number) => Location[];
+    visitedLocations: number[];
+    toggleVisited: (id: number) => void;
 }
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -72,4 +74,15 @@ export const useStore = create<StoreState>((set, get) => ({
     getLocationsBySeries: (seriesId) => {
         return get().locations.filter(l => l.seriesId === seriesId);
     },
+
+    // Track visited location IDs
+    visitedLocations: [],
+    toggleVisited: (locationId: number) => set((state) => {
+        const isVisited = state.visitedLocations.includes(locationId);
+        if (isVisited) {
+            return { visitedLocations: state.visitedLocations.filter(id => id !== locationId) };
+        } else {
+            return { visitedLocations: [...state.visitedLocations, locationId] };
+        }
+    }),
 }));

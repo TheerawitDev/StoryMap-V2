@@ -27,6 +27,9 @@ export async function Navbar() {
                     <Link href="/explore" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
                         สำรวจ (Explore)
                     </Link>
+                    <Link href="/places" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                        สถานที่ (Places)
+                    </Link>
                     <Link href="/profile" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
                         โปรไฟล์ (Profile)
                     </Link>
@@ -57,6 +60,9 @@ export async function Navbar() {
                                     </Link>
                                     <Link href="/explore" className="text-lg font-medium text-gray-900 hover:text-primary transition-colors">
                                         สำรวจ (Explore)
+                                    </Link>
+                                    <Link href="/places" className="text-lg font-medium text-gray-900 hover:text-primary transition-colors">
+                                        สถานที่ (Places)
                                     </Link>
                                     <Link href="/profile" className="text-lg font-medium text-gray-900 hover:text-primary transition-colors">
                                         โปรไฟล์ (Profile)

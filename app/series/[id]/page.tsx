@@ -13,7 +13,7 @@ import Image from "next/image";
 
 export default function SeriesDetailPage() {
     const params = useParams();
-    const { series, getLocationsBySeries, fetchData } = useStore();
+    const { series, getLocationsBySeries, fetchData, visitedLocations } = useStore();
     const [activeSeries, setActiveSeries] = useState<any>(null);
     const [locations, setLocations] = useState<any[]>([]);
 
@@ -43,6 +43,10 @@ export default function SeriesDetailPage() {
     const mapCenter = firstLoc
         ? firstLoc.coords.split(",").map((c: string) => parseFloat(c.trim())) as [number, number]
         : [13.7563, 100.5018] as [number, number];
+
+    // Calculate progress
+    const visitedCount = locations.filter(l => visitedLocations.includes(l.id)).length;
+    const progressPercentage = locations.length > 0 ? (visitedCount / locations.length) * 100 : 0;
 
     return (
         <div className="bg-gray-50 min-h-screen pb-20">
@@ -80,11 +84,14 @@ export default function SeriesDetailPage() {
                             <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-6">
                                 <h3 className="font-bold text-primary mb-1">ความคืบหน้าของคุณ</h3>
                                 <div className="flex items-center gap-2">
-                                    <div className="text-2xl font-bold text-gray-900">0 / {locations.length}</div>
+                                    <div className="text-2xl font-bold text-gray-900">{visitedCount} / {locations.length}</div>
                                     <div className="text-sm text-gray-500">สถานที่ที่เคยเยี่ยมชมแล้ว</div>
                                 </div>
                                 <div className="w-full bg-blue-200 h-2 rounded-full mt-3 overflow-hidden">
-                                    <div className="bg-primary h-full w-[0%] transition-all duration-500"></div>
+                                    <div
+                                        className="bg-primary h-full transition-all duration-500"
+                                        style={{ width: `${progressPercentage}%` }}
+                                    ></div>
                                 </div>
                             </div>
 
