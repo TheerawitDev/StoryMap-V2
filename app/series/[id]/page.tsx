@@ -48,6 +48,29 @@ export default function SeriesDetailPage() {
     const visitedCount = locations.filter(l => visitedLocations.includes(l.id)).length;
     const progressPercentage = locations.length > 0 ? (visitedCount / locations.length) * 100 : 0;
 
+    const handleShare = async () => {
+        const shareData = {
+            title: activeSeries.title,
+            text: `Check out ${activeSeries.title} on StoryMap!`,
+            url: window.location.href,
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.error("Error sharing:", err);
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                alert("ลิงก์ถูกคัดลอกไปยังคลิปบอร์ดแล้ว (Link copied to clipboard)!");
+            } catch (err) {
+                console.error("Failed to copy:", err);
+            }
+        }
+    };
+
     return (
         <div className="bg-gray-50 min-h-screen pb-20">
             <div className="container mx-auto px-4 py-8">
@@ -95,7 +118,7 @@ export default function SeriesDetailPage() {
                                 </div>
                             </div>
 
-                            <Button className="w-full gap-2" variant="outline">
+                            <Button className="w-full gap-2" variant="outline" onClick={handleShare}>
                                 <Share2 className="w-4 h-4" />
                                 แชร์ซีรีส์นี้
                             </Button>
