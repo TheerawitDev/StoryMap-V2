@@ -1,3 +1,4 @@
+
 datasource db {
   provider = "postgresql"
   url      = env("POSTGRES_URL")
@@ -18,6 +19,7 @@ model User {
   
   // Relations
   locations    Location[]
+  reviews      Review[]
 }
 
 model Account {
@@ -67,6 +69,20 @@ model Location {
   createdBy       User?    @relation(fields: [createdById], references: [id])
   
   createdAt       DateTime @default(now())
+  
+  reviews         Review[]
 }
 
-
+model Review {
+  id         String   @id @default(cuid())
+  rating     Int
+  comment    String?
+  
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  locationId Int
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime @default(now())
+}

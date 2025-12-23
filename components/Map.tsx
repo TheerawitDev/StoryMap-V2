@@ -88,7 +88,7 @@ export default function Map({ center, zoom, locations: propLocations, interactiv
                                     <h3 className="font-bold text-lg mb-0.5">{getSeriesTitle(loc.seriesId)}</h3>
                                     <p className="text-sm font-semibold text-gray-800 mb-2">{loc.name}</p>
                                     <p className="text-xs text-gray-600 mb-2">{loc.scene}</p>
-                                    <div className="text-xs text-blue-500 cursor-pointer hover:underline">View Details</div>
+                                    <a href={`/place/${loc.id}`} className="text-xs text-blue-500 cursor-pointer hover:underline">View Details</a>
                                 </div>
                             </Popup>
                         )}

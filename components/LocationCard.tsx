@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import Image from "next/image";
 
+import Link from "next/link";
+
 interface LocationCardProps {
     location: Location;
     seriesTitle: string;
@@ -45,25 +47,31 @@ export function LocationCard({ location, seriesTitle }: LocationCardProps) {
                         <span className="text-xs text-gray-400 mt-1 block">{location.description}</span>
                     </p>
 
-                    <div className="flex items-center gap-2 mt-auto">
+                    <div className="flex flex-wrap items-center gap-2 mt-auto pt-2">
                         <Button
                             variant={visited ? "default" : "outline"}
                             size="sm"
-                            className={cn("gap-2", visited && "bg-green-600 hover:bg-green-700 border-green-600")}
+                            className={cn("flex-1 text-xs h-9", visited && "bg-green-600 hover:bg-green-700 border-green-600")}
                             onClick={() => setVisited(!visited)}
                         >
-                            <CheckCircle className="w-4 h-4" />
-                            {visited ? "เยี่ยมชมแล้ว (Visited)" : "เช็คอิน (Check In)"}
+                            <CheckCircle className="w-3.5 h-3.5 mr-1" />
+                            {visited ? "Visited" : "Check In"}
                         </Button>
+
+                        <Link href={`/place/${location.id}`} className="flex-1">
+                            <Button variant="secondary" size="sm" className="w-full text-xs h-9">
+                                View Details
+                            </Button>
+                        </Link>
 
                         <Button
                             variant="ghost"
-                            size="sm"
-                            className="ml-auto text-gray-500 hover:text-primary"
+                            size="icon"
+                            className="h-9 w-9 text-gray-500 hover:text-primary shrink-0"
                             onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${location.coords}`, '_blank')}
+                            title="Navigate"
                         >
-                            <Navigation className="w-4 h-4 mr-1" />
-                            นำทาง
+                            <Navigation className="w-4 h-4" />
                         </Button>
                     </div>
                 </div>
