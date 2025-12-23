@@ -94,7 +94,7 @@ export default function Home() {
       <section className="container mx-auto px-4 mt-20">
         <h2 className="text-3xl font-bold text-gray-900 mb-8">สถานที่ไฮไลท์</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:h-[400px]">
-          <div className="relative rounded-2xl overflow-hidden group cursor-pointer h-[300px] md:h-full">
+          <Link href="/series/1" className="relative rounded-2xl overflow-hidden group cursor-pointer h-[300px] md:h-full block">
             <Image
               src="/images/wat-chaiwatthanaram.jpg"
               alt="Ayutthaya"
@@ -107,9 +107,9 @@ export default function Home() {
               <h3 className="text-2xl font-bold mb-2">อยุธยา (Ayutthaya)</h3>
               <p className="text-gray-200">ตามรอยบุพเพสันนิวาสและพรหมลิขิต ย้อนเวลาสู่อดีตที่งดงาม</p>
             </div>
-          </div>
+          </Link>
           <div className="grid grid-rows-2 gap-6 h-[400px] md:h-full">
-            <div className="relative rounded-2xl overflow-hidden cursor-pointer group">
+            <Link href="/series/13" className="relative rounded-2xl overflow-hidden cursor-pointer group block">
               <Image
                 src="/images/phuket-old-town.jpg"
                 alt="Phuket"
@@ -122,8 +122,8 @@ export default function Home() {
                 <h3 className="text-xl font-bold">ภูเก็ต (Phuket)</h3>
                 <p className="text-sm text-gray-200">แปลรักฉันด้วยใจเธอ</p>
               </div>
-            </div>
-            <div className="relative rounded-2xl overflow-hidden cursor-pointer group">
+            </Link>
+            <Link href="/series/0" className="relative rounded-2xl overflow-hidden cursor-pointer group block">
               <Image
                 src="/images/bangkok-city.jpg"
                 alt="Bangkok"
@@ -136,7 +136,7 @@ export default function Home() {
                 <h3 className="text-xl font-bold">กรุงเทพฯ (Bangkok)</h3>
                 <p className="text-sm text-gray-200">หลานม่า & Hunger</p>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
