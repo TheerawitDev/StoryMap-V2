@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Settings, LogOut, MapPin, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { AchievementsList } from "@/components/AchievementsList";
+import { VisitedCount } from "@/components/VisitedCount";
+// ...
 
 export default async function ProfilePage() {
     const session = await auth();
@@ -72,12 +75,15 @@ export default async function ProfilePage() {
                             <div className="text-3xl font-bold text-primary mb-1">{createdLocations.length}</div>
                             <div className="text-sm text-gray-600 font-medium">สถานที่ที่แนะนำ (Submitted)</div>
                         </div>
-                        {/* Placeholder for future features */}
-                        <div className="bg-gray-50 p-6 rounded-xl text-center border border-gray-100">
-                            <div className="text-3xl font-bold text-gray-400 mb-1">0</div>
-                            <div className="text-sm text-gray-500 font-medium">เช็คอิน (Coming Soon)</div>
+                        <div className="bg-green-50 p-6 rounded-xl text-center border border-green-100">
+                            <VisitedCount />
                         </div>
                     </div>
+                </div>
+
+                {/* Achievements Section */}
+                <div className="mb-12">
+                    <AchievementsList />
                 </div>
 
                 {/* Submitted Locations Section */}
