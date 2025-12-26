@@ -80,9 +80,9 @@ export default function SeriesDetailPage() {
                     กลับสู่หน้าสำรวจซีรีส์
                 </Link>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
                     {/* Sidebar / Info Column */}
-                    <div className="lg:col-span-4 space-y-6">
+                    <div className="xl:col-span-4 space-y-6">
                         {/* Series Main Card */}
                         <div className="bg-white p-6 rounded-2xl shadow-sm border">
                             <div className="aspect-[2/3] w-full bg-zinc-100 rounded-lg mb-6 relative overflow-hidden">
@@ -126,7 +126,7 @@ export default function SeriesDetailPage() {
                     </div>
 
                     {/* Main Content Column */}
-                    <div className="lg:col-span-8 space-y-6">
+                    <div className="xl:col-span-8 space-y-6">
 
                         {/* Map Section */}
                         <div className="bg-white p-1 rounded-2xl shadow-sm border h-[400px] overflow-hidden relative z-0">
