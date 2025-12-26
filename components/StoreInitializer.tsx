@@ -11,6 +11,7 @@ export function StoreInitializer() {
     useEffect(() => {
         if (!initialized.current) {
             fetchData();
+            useStore.getState().fetchUserData(); // Initialize user data
             initialized.current = true;
         }
     }, [fetchData]);
