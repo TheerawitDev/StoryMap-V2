@@ -19,6 +19,7 @@ model User {
   
   // Relations
   locations    Location[]
+  visits       Visit[]
   reviews      Review[]
 }
 
@@ -71,6 +72,8 @@ model Location {
   createdAt       DateTime @default(now())
   
   reviews         Review[]
+  
+  visits          Visit[]
 }
 
 model Review {
@@ -85,4 +88,16 @@ model Review {
   location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
   
   createdAt  DateTime @default(now())
+}
+
+model Visit {
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  locationId Int
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  
+  assignedAt DateTime @default(now())
+
+  @@id([userId, locationId])
 }

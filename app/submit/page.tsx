@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Upload, Loader2, ArrowLeft } from "lucide-react";
+import { ImageUpload } from "@/components/ImageUpload";
 import dynamic from "next/dynamic";
 import { LatLngTuple } from "leaflet";
 import Link from "next/link";
@@ -171,19 +172,16 @@ export default function SubmitLocationPage() {
                                 />
                             </div>
 
+
                             <div>
-                                <Label>ลิงก์รูปภาพ (Image URL)</Label>
-                                <div className="flex gap-2">
-                                    <Input
-                                        value={imageUrl}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImageUrl(e.target.value)}
-                                        placeholder="https://..."
-                                    />
-                                    {/* Ideally we would have file upload here, but strict URL for now is easier */}
-                                </div>
-                                <p className="text-xs text-gray-400 mt-1">ใส่ลิงก์รูปภาพจากอินเทอร์เน็ต</p>
+                                <ImageUpload
+                                    label="รูปภาพสถานที่ (Location Image)"
+                                    value={imageUrl}
+                                    onChange={setImageUrl}
+                                />
                             </div>
                         </div>
+
 
                         {/* Map Picker */}
                         <div className="space-y-4 h-full flex flex-col">
@@ -214,6 +212,6 @@ export default function SubmitLocationPage() {
                     </form>
                 </CardContent>
             </Card>
-        </div>
+        </div >
     );
 }

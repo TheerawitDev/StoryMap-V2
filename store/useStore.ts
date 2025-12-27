@@ -1,5 +1,6 @@
 
 import { create } from 'zustand';
+import { toggleVisit, getVisitedLocations } from '@/app/actions/user-actions';
 
 export interface Series {
     id: number;
@@ -34,7 +35,8 @@ interface StoreState {
     setSelectedLocation: (location: Location | null) => void;
     getLocationsBySeries: (seriesId: number) => Location[];
     visitedLocations: number[];
-    toggleVisited: (id: number) => void;
+    fetchUserData: () => Promise<void>;
+    toggleVisited: (id: number) => Promise<void>;
 }
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -76,13 +78,38 @@ export const useStore = create<StoreState>((set, get) => ({
     },
 
     // Track visited location IDs
+    // Track visited location IDs
     visitedLocations: [],
-    toggleVisited: (locationId: number) => set((state) => {
-        const isVisited = state.visitedLocations.includes(locationId);
-        if (isVisited) {
-            return { visitedLocations: state.visitedLocations.filter(id => id !== locationId) };
-        } else {
-            return { visitedLocations: [...state.visitedLocations, locationId] };
+
+    // Initialize user data (visited locations)
+    fetchUserData: async () => {
+        try {
+            const visited = await getVisitedLocations();
+            set({ visitedLocations: visited });
+        } catch (error) {
+            console.error("Failed to fetch user data:", error);
         }
-    }),
+    },
+
+    toggleVisited: async (locationId: number) => {
+        // Optimistic update
+        const currentVisited = get().visitedLocations;
+        const isVisited = currentVisited.includes(locationId);
+
+        // Update UI immediately
+        if (isVisited) {
+            set({ visitedLocations: currentVisited.filter(id => id !== locationId) });
+        } else {
+            set({ visitedLocations: [...currentVisited, locationId] });
+        }
+
+        // Call server action
+        try {
+            await toggleVisit(locationId);
+        } catch (error) {
+            // Revert on failure
+            console.error("Failed to toggle visit:", error);
+            set({ visitedLocations: currentVisited });
+        }
+    },
 }));

@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Loader2, Film } from "lucide-react";
+import { ImageUpload } from "@/components/ImageUpload";
 import Link from "next/link";
 
 export default function SubmitSeriesPage() {
@@ -105,15 +106,13 @@ export default function SubmitSeriesPage() {
                             />
                         </div>
 
+
                         <div>
-                            <Label className="text-base">ลิงก์รูปภาพโปสเตอร์ (Poster URL)</Label>
-                            <Input
+                            <ImageUpload
+                                label="รูปภาพโปสเตอร์ (Series Poster)"
                                 value={poster}
-                                onChange={(e) => setPoster(e.target.value)}
-                                placeholder="https://..."
-                                className="mt-2"
+                                onChange={setPoster}
                             />
-                            <p className="text-xs text-gray-400 mt-1">ใส่ลิงก์รูปภาพจากอินเทอร์เน็ต (ถ้ามี)</p>
                         </div>
 
                         <div className="pt-4">
@@ -124,6 +123,6 @@ export default function SubmitSeriesPage() {
                     </form>
                 </CardContent>
             </Card>
-        </div>
+        </div >
     );
 }
