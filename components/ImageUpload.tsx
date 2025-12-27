@@ -33,13 +33,16 @@ export function ImageUpload({ value, onChange, label = "Upload Image", className
                 body: formData,
             });
 
-            if (!res.ok) throw new Error("Upload failed");
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(errorData.error || "Upload failed");
+            }
 
             const data = await res.json();
             onChange(data.url);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Upload error:", error);
-            alert("Failed to upload image.");
+            alert(error.message || "Failed to upload image.");
         } finally {
             setIsUploading(false);
             // Reset input so validation can trigger again if needed

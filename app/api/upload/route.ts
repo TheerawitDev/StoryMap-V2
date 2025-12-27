@@ -13,22 +13,30 @@ export async function POST(request: Request) {
         }
 
         const buffer = Buffer.from(await file.arrayBuffer());
-        const filename = Date.now() + "_" + file.name.replaceAll(" ", "_");
+        // Sanitize filename: remove spaces and special characters, keep extension
+        const sanitizedFilename = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+        const filename = Date.now() + "_" + sanitizedFilename;
 
         // Ensure uploads directory exists
         const uploadDir = path.join(process.cwd(), "public/uploads");
         try {
             await mkdir(uploadDir, { recursive: true });
-        } catch (e) {
-            // Ignore error if directory already exists
+        } catch (e: any) {
+            if (e.code !== 'EEXIST') {
+                console.error("Directory creation error:", e);
+                throw e;
+            }
         }
 
         const filepath = path.join(uploadDir, filename);
         await writeFile(filepath, buffer);
 
         return NextResponse.json({ url: `/uploads/${filename}` });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Upload Error:", error);
-        return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+        return NextResponse.json(
+            { error: error.message || "Upload failed" },
+            { status: 500 }
+        );
     }
 }
