@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Upload, Loader2, ArrowLeft } from "lucide-react";
+import { MapPin, Upload, Loader2, ArrowLeft, Search } from "lucide-react";
 import { ImageUpload } from "@/components/ImageUpload";
 import dynamic from "next/dynamic";
 import { LatLngTuple } from "leaflet";
@@ -19,7 +19,7 @@ import Link from "next/link";
 const Map = dynamic(
     async () => {
         const L = (await import("leaflet")).default;
-        const { MapContainer, TileLayer, Marker, useMapEvents } = await import("react-leaflet");
+        const { MapContainer, TileLayer, Marker, useMapEvents, useMap } = await import("react-leaflet");
 
         // Component to handle map clicks
         const LocationPicker = ({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) => {
@@ -31,6 +31,17 @@ const Map = dynamic(
             return null;
         };
 
+        // Component to update map center when props change
+        const UpdateMapCenter = ({ center }: { center: LatLngTuple | null }) => {
+            const map = useMap();
+            useEffect(() => {
+                if (center) {
+                    map.flyTo(center, 16);
+                }
+            }, [center, map]);
+            return null;
+        };
+
         return function MapPicker({ selectedPos, onSelect }: { selectedPos: LatLngTuple | null, onSelect: (lat: number, lng: number) => void }) {
             return (
                 <MapContainer center={[13.7563, 100.5018]} zoom={10} className="w-full h-full rounded-md z-0">
@@ -39,6 +50,7 @@ const Map = dynamic(
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     <LocationPicker onLocationSelect={onSelect} />
+                    <UpdateMapCenter center={selectedPos} />
                     {selectedPos && <Marker position={selectedPos} icon={L.icon({
                         iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
                         iconSize: [25, 41],
@@ -65,12 +77,38 @@ export default function SubmitLocationPage() {
     const [imageUrl, setImageUrl] = useState("");
     const [coords, setCoords] = useState<LatLngTuple | null>(null);
 
+    // Search State
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
+
     // Redirect if not authenticated
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/login?callbackUrl=/submit");
         }
     }, [status, router]);
+
+    const handleSearch = async () => {
+        if (!searchQuery.trim()) return;
+        setIsSearching(true);
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`);
+            const data = await response.json();
+            if (data && data.length > 0) {
+                const { lat, lon } = data[0];
+                const newLat = parseFloat(lat);
+                const newLng = parseFloat(lon);
+                setCoords([newLat, newLng]);
+            } else {
+                alert("ไม่พบสถานที่ที่ค้นหา");
+            }
+        } catch (error) {
+            console.error("Search error:", error);
+            alert("เกิดข้อผิดพลาดในการค้นหา");
+        } finally {
+            setIsSearching(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -184,9 +222,28 @@ export default function SubmitLocationPage() {
 
 
                         {/* Map Picker */}
-                        <div className="space-y-4 h-full flex flex-col">
+                        <div className="space-y-4 flex flex-col">
                             <Label>ปักหมุดตำแหน่ง (Pin Location) *</Label>
-                            <div className="flex-1 min-h-[300px] border rounded-md relative overflow-hidden">
+
+                            {/* Search Box */}
+                            <div className="flex gap-2 mb-2">
+                                <Input
+                                    placeholder="ค้นหาสถานที่... (เช่น Siam Paragon)"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            handleSearch();
+                                        }
+                                    }}
+                                />
+                                <Button type="button" variant="outline" onClick={handleSearch} disabled={isSearching}>
+                                    {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                                </Button>
+                            </div>
+
+                            <div className="h-[400px] border rounded-md relative overflow-hidden">
                                 <Map
                                     selectedPos={coords}
                                     onSelect={(lat, lng) => setCoords([lat, lng])}
