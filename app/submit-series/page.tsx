@@ -53,15 +53,18 @@ export default function SubmitSeriesPage() {
                 }),
             });
 
-            if (!res.ok) throw new Error("Submission failed");
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(errorData.error || "Submission failed");
+            }
 
             // Success
             alert("เพิ่มซีรีส์สำเร็จ!");
             fetchData(); // Refresh store
             router.push("/explore");
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+            alert(error.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
         } finally {
             setIsSubmitting(false);
         }
