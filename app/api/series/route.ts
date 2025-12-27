@@ -36,14 +36,19 @@ import { auth } from "@/auth";
 export async function POST(req: Request) {
     try {
         const session = await auth();
+        console.log("Session:", session); // Debug log
+
         if (!session || !session.user) {
+            console.log("Unauthorized: No session");
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         const body = await req.json();
+        console.log("Request Body:", body); // Debug log
         const { title, description, poster, isTrending } = body;
 
         if (!title || !description) {
+            console.log("Missing fields");
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
