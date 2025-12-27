@@ -21,7 +21,7 @@ export default function ContactPage() {
                     </div>
                     <div className="flex items-center gap-3 text-gray-700">
                         <Phone className="w-5 h-5 text-primary" />
-                        <span>02-123-4567</span>
+                        <span>095-192-4253</span>
                     </div>
                     <div className="flex items-center gap-3 text-gray-700">
                         <MapPin className="w-5 h-5 text-primary" />
