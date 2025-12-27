@@ -15,11 +15,33 @@ import { ImageUpload } from "@/components/ImageUpload";
 import dynamic from "next/dynamic";
 import { LatLngTuple } from "leaflet";
 import Link from "next/link";
+import "leaflet/dist/leaflet.css";
+
 // Dynamic import for Map to avoid SSR issues
 const Map = dynamic(
     async () => {
         const L = (await import("leaflet")).default;
         const { MapContainer, TileLayer, Marker, useMapEvents, useMap } = await import("react-leaflet");
+
+        // Component to fix map size issues
+        const MapUpdater = () => {
+            const map = useMap();
+            useEffect(() => {
+                // Invalidate size immediately
+                map.invalidateSize();
+
+                // Observe container resize
+                const resizeObserver = new ResizeObserver(() => {
+                    map.invalidateSize();
+                });
+                resizeObserver.observe(map.getContainer());
+
+                return () => {
+                    resizeObserver.disconnect();
+                };
+            }, [map]);
+            return null;
+        };
 
         // Component to handle map clicks
         const LocationPicker = ({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) => {
@@ -44,11 +66,12 @@ const Map = dynamic(
 
         return function MapPicker({ selectedPos, onSelect }: { selectedPos: LatLngTuple | null, onSelect: (lat: number, lng: number) => void }) {
             return (
-                <MapContainer center={[13.7563, 100.5018]} zoom={10} className="w-full h-full rounded-md z-0">
+                <MapContainer center={[13.7563, 100.5018]} zoom={10} className="w-full h-full rounded-md z-0" scrollWheelZoom={true}>
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
+                    <MapUpdater />
                     <LocationPicker onLocationSelect={onSelect} />
                     <UpdateMapCenter center={selectedPos} />
                     {selectedPos && <Marker position={selectedPos} icon={L.icon({
@@ -91,16 +114,29 @@ export default function SubmitLocationPage() {
     const handleSearch = async () => {
         if (!searchQuery.trim()) return;
         setIsSearching(true);
-        try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`);
+
+        const searchNominatim = async (query: string) => {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
             const data = await response.json();
+            return data;
+        };
+
+        try {
+            // First try: exact query
+            let data = await searchNominatim(searchQuery);
+
+            // Second try: append "Thailand" if no results and query doesn't already have it
+            if ((!data || data.length === 0) && !searchQuery.toLowerCase().includes("thailand")) {
+                data = await searchNominatim(`${searchQuery}, Thailand`);
+            }
+
             if (data && data.length > 0) {
                 const { lat, lon } = data[0];
                 const newLat = parseFloat(lat);
                 const newLng = parseFloat(lon);
                 setCoords([newLat, newLng]);
             } else {
-                alert("ไม่พบสถานที่ที่ค้นหา");
+                alert("ไม่พบสถานที่ที่ค้นหา ลองระบุชื่อให้ชัดเจนขึ้น หรือพิกัดใกล้เคียง");
             }
         } catch (error) {
             console.error("Search error:", error);
