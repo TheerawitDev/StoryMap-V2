@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Story Map
+
+An interactive web application for exploring and tracking filming locations of popular Thai series. Discover where your favorite scenes were shot, track locations you've visited, and contribute to the growing map of series locations.
+
+## Features
+
+- **Interactive Map**: Visualize series locations on a dynamic map powered by Leaflet.
+- **Series Explorer**: Browse a collection of Thai series and their specific filming locations.
+- **Location Details**: View detailed information, scene descriptions, and photos for each location.
+- **User Accounts**: Secure authentication using Google Login (via NextAuth.js).
+- **Visit Tracking**: Mark locations as "Visited" to keep a travel log of your series pilgrimage.
+- **Reviews**: Share your experiences by leaving ratings and comments on locations.
+- **Community Contributions**: Submit new series and locations with image uploads.
+
+## Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [Shadcn/UI](https://ui.shadcn.com/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) (via [Prisma ORM](https://www.prisma.io/))
+- **Authentication**: [NextAuth.js v5](https://authjs.dev/)
+- **Maps**: [React Leaflet](https://react-leaflet.js.org/) & [Leaflet](https://leafletjs.com/)
+- **Storage**: [Vercel Blob](https://vercel.com/docs/storage/vercel-blob)
+- **Deployment**: [Vercel](https://vercel.com)
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps to set up the project locally.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- A PostgreSQL database (local or cloud-hosted like Vercel Postgres or Supabase)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Clone the repository:**
 
-## Learn More
+   ```bash
+   git clone <repository-url>
+   cd story-map_v3
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Install dependencies:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Configure Environment Variables:**
 
-## Deploy on Vercel
+   Create a `.env` file in the root directory and add the following variables:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```env
+   # Database Connection
+   POSTGRES_URL="postgresql://user:password@host:port/database?schema=public"
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   # NextAuth.js Configuration
+   AUTH_SECRET="your-generated-secret" # Run `npx auth secret` to generate
+   
+   # Google OAuth Provider
+   AUTH_GOOGLE_ID="your-google-client-id"
+   AUTH_GOOGLE_SECRET="your-google-client-secret"
+
+   # Vercel Blob Storage
+   BLOB_READ_WRITE_TOKEN="your-vercel-blob-token"
+   ```
+
+4. **Setup Database:**
+
+   Generate the Prisma client and push the schema to your database:
+
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+   (Optional) Seed the database with initial series data:
+
+   ```bash
+   npx prisma db seed
+   ```
+
+5. **Run the Development Server:**
+
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Scripts
+
+- `npm run dev`: Starts the development server.
+- `npm run build`: Builds the application for production.
+- `npm run start`: Starts the production server.
+- `npm run lint`: Runs ESLint to check for code issues.
+- `postinstall`: Automatically generates Prisma Client after installation.
+
+## Project Structure
+
+- `app/`: Next.js App Router pages and API routes.
+- `components/`: Reusable UI components.
+- `prisma/`: Database schema and seed scripts.
+- `store/`: Zustand state management stores.
+- `lib/`: Utility functions and shared logic.
+
+## Deployment
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new).
+
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
