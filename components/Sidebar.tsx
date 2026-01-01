@@ -121,7 +121,7 @@ export function Sidebar() {
 
                         {filteredSeries.length === 0 && (
                             <div className="text-center text-gray-500 py-10">
-                                No series found by "{searchTerm}"
+                                No series found by &quot;{searchTerm}&quot;
                             </div>
                         )}
                     </div>

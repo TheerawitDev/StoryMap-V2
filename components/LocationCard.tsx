@@ -49,7 +49,7 @@ export function LocationCard({ location, seriesTitle, layout = "horizontal" }: L
                     )}
 
                     <p className="text-sm text-gray-600 mb-4 bg-gray-50 p-2 rounded-lg border border-gray-100">
-                        "{location.scene}" <br />
+                        &quot;{location.scene}&quot; <br />
                         <span className="text-xs text-gray-400 mt-1 block line-clamp-2">{location.description}</span>
                     </p>
 

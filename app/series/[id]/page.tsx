@@ -14,8 +14,10 @@ import Image from "next/image";
 export default function SeriesDetailPage() {
     const params = useParams();
     const { series, getLocationsBySeries, fetchData, visitedLocations } = useStore();
-    const [activeSeries, setActiveSeries] = useState<any>(null);
-    const [locations, setLocations] = useState<any[]>([]);
+    // Derived state
+    const id = params.id ? parseInt(params.id as string) : null;
+    const activeSeries = id ? series.find(item => item.id === id) : null;
+    const locations = id ? getLocationsBySeries(id) : [];
 
     useEffect(() => {
         if (series.length === 0) {
@@ -23,16 +25,7 @@ export default function SeriesDetailPage() {
         }
     }, [series.length, fetchData]);
 
-    useEffect(() => {
-        if (params.id) {
-            const id = parseInt(params.id as string);
-            const s = series.find(item => item.id === id);
-            if (s) {
-                setActiveSeries(s);
-                setLocations(getLocationsBySeries(id));
-            }
-        }
-    }, [params.id, series, getLocationsBySeries]);
+
 
     if (!activeSeries) {
         return <div className="p-20 text-center">Loading or Series Not Found...</div>;
