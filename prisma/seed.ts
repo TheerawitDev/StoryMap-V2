@@ -4,8 +4,8 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 // Full Data Mapping from useStore.ts
-// @ts-ignore
-import { seriesData, locationData } from './data.ts'
+// Full Data Mapping from useStore.ts
+import { seriesData, locationData } from './data'
 
 async function main() {
     console.log(`Start seeding ...`)
