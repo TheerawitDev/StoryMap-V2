@@ -52,9 +52,17 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
+        // Simple slug generation
+        const slug = title.toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\-]+/g, '')
+            .replace(/\-\-+/g, '-') +
+            Math.floor(Math.random() * 1000).toString();
+
         const newSeries = await prisma.series.create({
             data: {
                 title,
+                slug,
                 description,
                 category: category || "Series",
                 poster: poster || "/images/placeholder.jpg",
