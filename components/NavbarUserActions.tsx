@@ -66,6 +66,15 @@ export function NavbarUserActions({ user }: UserActionsProps) {
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                {(user as any).role === "ADMIN" && (
+                    <DropdownMenuItem asChild>
+                        <Link href="/admin" className="cursor-pointer text-blue-600 font-medium">
+                            <User className="mr-2 h-4 w-4" />
+                            <span>แดชบอร์ด (Admin)</span>
+                        </Link>
+                    </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                     className="text-red-600 cursor-pointer"
                     onClick={() => signOut({ callbackUrl: "/" })}

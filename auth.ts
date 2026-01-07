@@ -48,6 +48,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async session({ session, token }) {
             if (token?.sub && session.user) {
                 session.user.id = token.sub;
+
+                // Check if user is an Allowed Admin
+                if (session.user.email) {
+                    const isAdmin = await (prisma as any).allowedAdmin.findUnique({
+                        where: { email: session.user.email }
+                    });
+                    if (isAdmin) {
+                        // Create a type extension if needed, or just cast for now. 
+                        // ideally we extend the type but for speed we'll assign it.
+                        (session.user as any).role = "ADMIN";
+                    }
+                }
             }
             return session;
         },

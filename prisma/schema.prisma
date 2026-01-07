@@ -23,6 +23,10 @@ model User {
   reviews      Review[]
 }
 
+model AllowedAdmin {
+  email String @id
+}
+
 model Account {
   id                 String  @id @default(cuid())
   userId             String
@@ -64,7 +68,7 @@ model Location {
   
   // Relations
   seriesId        Int
-  series          Series   @relation(fields: [seriesId], references: [id])
+  series          Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
   
   createdById     String?
   createdBy       User?    @relation(fields: [createdById], references: [id])

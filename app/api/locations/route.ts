@@ -10,9 +10,17 @@ export async function GET(request: Request) {
     try {
         const whereClause = seriesId ? { seriesId: parseInt(seriesId) + 1 } : {}; // Handle 0-based index shift if passed from old frontend
 
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
         const locations = await prisma.location.findMany({
             where: whereClause,
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
+            include: {
+                visits: {
+                    where: { assignedAt: { gte: twentyFourHoursAgo } },
+                    select: { userId: true }
+                }
+            }
         });
 
         const formattedLocations = locations.map(l => ({
@@ -23,7 +31,8 @@ export async function GET(request: Request) {
             isMajor: l.isMajor,
             scene: l.scene || "",
             description: l.description,
-            coords: l.coords
+            coords: l.coords,
+            recentVisitCount: l.visits.length
         }));
 
         return NextResponse.json(formattedLocations);
