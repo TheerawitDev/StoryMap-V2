@@ -22,6 +22,13 @@ export function ImageUpload({ value, onChange, label = "Image", disabled }: Imag
         const file = e.target.files?.[0]
         if (!file) return
 
+        // Check file size (max 4.5MB for Vercel Serverless)
+        if (file.size > 4.5 * 1024 * 1024) {
+            alert("File is too large. Please match Vercel limit of 4.5MB.")
+            if (fileInputRef.current) fileInputRef.current.value = ""
+            return
+        }
+
         setIsUploading(true)
         try {
             const formData = new FormData()
@@ -32,13 +39,16 @@ export function ImageUpload({ value, onChange, label = "Image", disabled }: Imag
                 body: formData,
             })
 
-            if (!res.ok) throw new Error("Upload failed")
+            if (!res.ok) {
+                const errorData = await res.text()
+                throw new Error(errorData || `Upload failed with status ${res.status}`)
+            }
 
             const data = await res.json()
             onChange(data.url)
-        } catch (error) {
+        } catch (error: any) {
             console.error(error)
-            alert("Upload failed")
+            alert(error.message || "Upload failed")
         } finally {
             setIsUploading(false)
             // Reset input

@@ -15,9 +15,12 @@ export default function SeriesDetailPage() {
     const params = useParams();
     const { series, getLocationsBySeries, fetchData, visitedLocations } = useStore();
     // Derived state
-    const id = params.id ? parseInt(params.id as string) : null;
-    const activeSeries = id ? series.find(item => item.id === id) : null;
-    const locations = id ? getLocationsBySeries(id) : [];
+    const slug = params.slug as string;
+    const activeSeries = slug ? series.find(item => item.slug === slug) : null;
+
+    // Fetch locations if series is found; useStore should filter by seriesId directly.
+    // Since we aligned IDs, activeSeries.id should match location.seriesId.
+    const locations = activeSeries ? getLocationsBySeries(activeSeries.id) : [];
 
     useEffect(() => {
         if (series.length === 0) {
@@ -86,11 +89,16 @@ export default function SeriesDetailPage() {
                                     className="object-cover"
                                     priority
                                 />
-                                {activeSeries.isTrending && (
-                                    <span className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
-                                        TRENDING
+                                <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
+                                    {activeSeries.isTrending && (
+                                        <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
+                                            TRENDING
+                                        </span>
+                                    )}
+                                    <span className="bg-black/60 backdrop-blur-md text-white text-xs font-medium px-3 py-1 rounded-full shadow-md z-10 border border-white/20">
+                                        {activeSeries.category}
                                     </span>
-                                )}
+                                </div>
                             </div>
 
                             <h1 className="text-3xl font-bold text-gray-900 mb-2">{activeSeries.title}</h1>

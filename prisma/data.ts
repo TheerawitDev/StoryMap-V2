@@ -3,6 +3,8 @@
 interface Series {
     id: number;
     title: string;
+    slug: string;
+    category: string;
     poster: string;
     description: string;
     isTrending: boolean;
@@ -23,6 +25,8 @@ export const seriesData: Series[] = [
     {
         id: 1,
         title: "LISA - ROCKSTAR",
+        slug: "lisa-rockstar",
+        category: "Music Video",
         poster: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop", // Cyberpunk Bangkok Night (Verified)
         description: "มิวสิควิดีโอระดับโลกของ 'ลิซ่า' ที่สร้างปรากฏการณ์ปิดถนนเยาวราชถ่ายทำ โชว์ความเป็นไทยสู่สายตาชาวโลก",
         isTrending: true
@@ -30,6 +34,8 @@ export const seriesData: Series[] = [
     {
         id: 2,
         title: "King the Land (คิง เดอะ แลนด์)",
+        slug: "king-the-land",
+        category: "Series",
         poster: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=2000&auto=format&fit=crop", // Romantic Wat Arun Sunset (Verified)
         description: "ซีรีส์เกาหลีแนวโรแมนติกคอมเมดี้ ที่ยกกองมาถ่ายทำในไทยทั้งตอน และพากินเที่ยวตามรอยสถานที่ยอดฮิตในกรุงเทพฯ",
         isTrending: true
@@ -37,6 +43,8 @@ export const seriesData: Series[] = [
     {
         id: 3,
         title: "Hunger (คนหิว เกมกระหาย)",
+        slug: "hunger",
+        category: "Movie",
         poster: "https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?q=80&w=2080&auto=format&fit=crop", // Intense Street Food Cooking (Verified)
         description: "ภาพยนตร์ไทยบน Netflix ที่ตีแผ่ด้านมืดของวงการ Fine Dining กับฉากสตรีทฟู้ดที่ดิบเถื่อนและงดงาม",
         isTrending: false
@@ -44,6 +52,8 @@ export const seriesData: Series[] = [
     {
         id: 4,
         title: "How to Make Millions Before Grandma Dies (หลานม่า)",
+        slug: "how-to-make-millions-before-grandma-dies",
+        category: "Movie",
         poster: "https://images.unsplash.com/photo-1528181304800-259b08848526?q=80&w=2070&auto=format&fit=crop", // Old Thai Town Nostalgia (Verified)
         description: "ภาพยนตร์ดราม่าครอบครัวที่ทำเงินถล่มทลายและสร้างกระแส 'เที่ยวตลาดพลู' ให้กลับมาคึกคักอีกครั้ง",
         isTrending: true
@@ -51,6 +61,8 @@ export const seriesData: Series[] = [
     {
         id: 5,
         title: "The Hangover Part II (เดอะ แฮงค์โอเวอร์ ภาค 2)",
+        slug: "the-hangover-part-2",
+        category: "Movie",
         poster: "https://images.unsplash.com/photo-1596253603417-809228892556?q=80&w=2070&auto=format&fit=crop", // Bangkok Rooftop Party (Verified)
         description: "ภาพยนตร์ฮอลลีวูดสุดฮาที่ทำให้ Sky Bar ที่ตึก State Tower กลายเป็นจุดหมายปลายทางของนักท่องเที่ยวทั่วโลก",
         isTrending: false

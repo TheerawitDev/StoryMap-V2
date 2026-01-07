@@ -14,10 +14,10 @@ export async function GET() {
 
         // Transform to match Store Interface
         const formattedSeries = series.map(s => ({
-            id: s.id - 1, // Transform back to 0-based index for now or update store to 1-based. Let's stick to 0-based for frontend compat if possible, OR better, update frontend to use DB IDs.
-            // Actually, let's update frontend to use real IDs.
-            realId: s.id,
+            id: s.id,
             title: s.title,
+            slug: (s as any).slug,
+            category: (s as any).category || "Series",
             poster: s.poster || "",
             description: s.description,
             totalLocations: s._count.locations,
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
 
         const body = await req.json();
         console.log("Request Body:", body); // Debug log
-        const { title, description, poster, isTrending } = body;
+        const { title, description, poster, isTrending, category } = body;
 
         if (!title || !description) {
             console.log("Missing fields");
@@ -56,6 +56,7 @@ export async function POST(req: Request) {
             data: {
                 title,
                 description,
+                category: category || "Series",
                 poster: poster || "/images/placeholder.jpg",
                 isTrending: isTrending || false,
             },
