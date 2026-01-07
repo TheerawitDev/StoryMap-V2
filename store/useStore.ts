@@ -20,6 +20,7 @@ export interface Location {
     scene: string;
     description: string;
     coords: string; // "lat, lng" string to be parsed
+    recentVisitCount: number;
 }
 
 interface StoreState {
