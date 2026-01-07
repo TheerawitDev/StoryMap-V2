@@ -20,6 +20,7 @@ interface Series {
     id: number;
     title: string;
     description: string | null;
+    category: string;
     poster: string | null;
     isTrending: boolean;
 }
@@ -67,6 +68,7 @@ export function SeriesTab({ series }: SeriesTabProps) {
                         <TableRow>
                             <TableHead className="w-[80px]">Image</TableHead>
                             <TableHead>Title</TableHead>
+                            <TableHead>Category</TableHead>
                             <TableHead className="hidden md:table-cell">Description</TableHead>
                             <TableHead className="w-[100px]">Trending</TableHead>
                             <TableHead className="w-[100px] text-right">Actions</TableHead>
@@ -88,6 +90,11 @@ export function SeriesTab({ series }: SeriesTabProps) {
                                     </div>
                                 </TableCell>
                                 <TableCell className="font-medium">{item.title}</TableCell>
+                                <TableCell>
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        {item.category || "Series"}
+                                    </span>
+                                </TableCell>
                                 <TableCell className="hidden md:table-cell truncate max-w-xs">{item.description}</TableCell>
                                 <TableCell>{item.isTrending ? "Yes" : "No"}</TableCell>
                                 <TableCell className="text-right">
@@ -121,7 +128,8 @@ export function SeriesTab({ series }: SeriesTabProps) {
                 series={selectedSeries ? {
                     ...selectedSeries,
                     description: selectedSeries.description ?? "",
-                    poster: selectedSeries.poster ?? ""
+                    poster: selectedSeries.poster ?? "",
+                    category: selectedSeries.category ?? "Series"
                 } : undefined}
             />
         </div>

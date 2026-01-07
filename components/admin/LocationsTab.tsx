@@ -25,6 +25,7 @@ import { LocationDialog } from "./LocationDialog"
 interface SeriesSummary {
     id: number;
     title: string;
+    category: string;
 }
 
 interface Location {

@@ -29,7 +29,18 @@ export default async function ProfilePage() {
     });
 
     if (!user) {
-        return <div>User not found</div>;
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
+                <h1 className="text-2xl font-bold mb-2">User Record Not Found</h1>
+                <p className="text-muted-foreground mb-4">
+                    Your database record was cleared during the update. <br />
+                    Please sign out and sign in again to recreate your profile.
+                </p>
+                <Link href="/api/auth/signout">
+                    <Button variant="outline">Sign Out & Refresh</Button>
+                </Link>
+            </div>
+        );
     }
 
     const createdLocations = user.locations;

@@ -47,7 +47,7 @@ export const seriesData: Series[] = [
         category: "Movie",
         poster: "https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?q=80&w=2080&auto=format&fit=crop", // Intense Street Food Cooking (Verified)
         description: "ภาพยนตร์ไทยบน Netflix ที่ตีแผ่ด้านมืดของวงการ Fine Dining กับฉากสตรีทฟู้ดที่ดิบเถื่อนและงดงาม",
-        isTrending: false
+        isTrending: true
     },
     {
         id: 4,
@@ -65,7 +65,7 @@ export const seriesData: Series[] = [
         category: "Movie",
         poster: "https://images.unsplash.com/photo-1596253603417-809228892556?q=80&w=2070&auto=format&fit=crop", // Bangkok Rooftop Party (Verified)
         description: "ภาพยนตร์ฮอลลีวูดสุดฮาที่ทำให้ Sky Bar ที่ตึก State Tower กลายเป็นจุดหมายปลายทางของนักท่องเที่ยวทั่วโลก",
-        isTrending: false
+        isTrending: true
     }
 ];
 
