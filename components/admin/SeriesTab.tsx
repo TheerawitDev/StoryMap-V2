@@ -15,15 +15,24 @@ import Image from "next/image"
 import { deleteSeries } from "@/app/actions/admin"
 import { SeriesDialog } from "./SeriesDialog"
 
+// Define the shape of Series data expected by the admin tab
+interface Series {
+    id: number;
+    title: string;
+    description: string | null;
+    poster: string | null;
+    isTrending: boolean;
+}
+
 interface SeriesTabProps {
-    series: any[]
+    series: Series[]
 }
 
 export function SeriesTab({ series }: SeriesTabProps) {
-    const [selectedSeries, setSelectedSeries] = useState<any | undefined>(undefined)
+    const [selectedSeries, setSelectedSeries] = useState<Series | undefined>(undefined)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-    const handleEdit = (item: any) => {
+    const handleEdit = (item: Series) => {
         setSelectedSeries(item)
         setIsDialogOpen(true)
     }
@@ -109,7 +118,11 @@ export function SeriesTab({ series }: SeriesTabProps) {
             <SeriesDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
-                series={selectedSeries}
+                series={selectedSeries ? {
+                    ...selectedSeries,
+                    description: selectedSeries.description ?? "",
+                    poster: selectedSeries.poster ?? ""
+                } : undefined}
             />
         </div>
     )

@@ -26,7 +26,7 @@ async function main() {
     try {
         await prisma.$executeRawUnsafe(`ALTER SEQUENCE "Series_id_seq" RESTART WITH ${nextId};`)
         console.log('Successfully reset "Series_id_seq"')
-    } catch (error) {
+    } catch {
         console.log('Error resetting "Series_id_seq", trying lowercase "series_id_seq"...')
         try {
             await prisma.$executeRawUnsafe(`ALTER SEQUENCE "series_id_seq" RESTART WITH ${nextId};`)

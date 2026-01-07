@@ -22,17 +22,34 @@ import Image from "next/image"
 import { deleteLocation } from "@/app/actions/admin"
 import { LocationDialog } from "./LocationDialog"
 
+interface SeriesSummary {
+    id: number;
+    title: string;
+}
+
+interface Location {
+    id: number;
+    name: string;
+    image: string | null;
+    seriesId: number;
+    series?: SeriesSummary;
+    description: string | null;
+    scene: string | null;
+    coords: string | null;
+    isMajor: boolean;
+}
+
 interface LocationsTabProps {
-    locations: any[]
-    series: any[]
+    locations: Location[]
+    series: SeriesSummary[]
 }
 
 export function LocationsTab({ locations, series }: LocationsTabProps) {
-    const [selectedLocation, setSelectedLocation] = useState<any | undefined>(undefined)
+    const [selectedLocation, setSelectedLocation] = useState<Location | undefined>(undefined)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [filterSeriesId, setFilterSeriesId] = useState<string>("all")
 
-    const handleEdit = (item: any) => {
+    const handleEdit = (item: Location) => {
         setSelectedLocation(item)
         setIsDialogOpen(true)
     }
@@ -136,7 +153,13 @@ export function LocationsTab({ locations, series }: LocationsTabProps) {
             <LocationDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
-                location={selectedLocation}
+                location={selectedLocation ? {
+                    seriesId: selectedLocation.seriesId.toString(),
+                    image: selectedLocation.image ?? "",
+                    description: selectedLocation.description ?? "",
+                    scene: selectedLocation.scene ?? "",
+                    coords: selectedLocation.coords ?? ""
+                } : undefined}
                 seriesOptions={series}
             />
         </div>

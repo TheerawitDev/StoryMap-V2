@@ -48,7 +48,7 @@ const formSchema = z.object({
 type LocationFormValues = z.infer<typeof formSchema>
 
 interface LocationDialogProps {
-    location?: any // Using any loosely here to avoid complex Prisma type mapping in client component, or define a strict type
+    location?: Partial<LocationFormValues> & { id?: number }
     seriesOptions: SeriesOption[]
     trigger?: React.ReactNode
     open?: boolean
@@ -82,7 +82,7 @@ export function LocationDialog({ location, seriesOptions, trigger, open, onOpenC
             reset({
                 id: location.id,
                 name: location.name,
-                seriesId: location.seriesId.toString(),
+                seriesId: location.seriesId?.toString(),
                 image: location.image || "",
                 description: location.description,
                 scene: location.scene || "",
@@ -106,7 +106,7 @@ export function LocationDialog({ location, seriesOptions, trigger, open, onOpenC
     const isMajor = watch("isMajor")
     const seriesId = watch("seriesId")
 
-    const onSubmit = async (data: any) => { // Use any to bypass strict Zod/HookForm mismatch
+    const onSubmit = async (data: LocationFormValues) => {
         setIsLoading(true)
         try {
             await upsertLocation({
@@ -143,7 +143,7 @@ export function LocationDialog({ location, seriesOptions, trigger, open, onOpenC
                         <div className="space-y-2">
                             <Label>Series</Label>
                             <Select
-                                onValueChange={(val) => setValue("seriesId", val as any)}
+                                onValueChange={(val) => setValue("seriesId", val)}
                                 value={seriesId?.toString()}
                                 disabled={isLoading}
                             >

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -56,10 +56,26 @@ export function SeriesDialog({ series, trigger, open, onOpenChange }: SeriesDial
         }
     })
 
+    useEffect(() => {
+        if (series) {
+            reset({
+                ...series,
+                isTrending: series.isTrending ?? false
+            })
+        } else {
+            reset({
+                title: "",
+                description: "",
+                poster: "",
+                isTrending: false
+            })
+        }
+    }, [series, reset, show])
+
     const poster = watch("poster")
     const isTrending = watch("isTrending")
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: SeriesFormValues) => {
         setIsLoading(true)
         try {
             await upsertSeries({
