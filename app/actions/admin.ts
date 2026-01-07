@@ -25,8 +25,18 @@ const SeriesSchema = z.object({
     title: z.string().min(1),
     description: z.string().min(1),
     poster: z.string().url(),
+    category: z.string().optional(),
     isTrending: z.boolean().default(false),
 })
+
+function slugify(text: string) {
+    return text.toString().toLowerCase()
+        .replace(/\s+/g, '-')           // Replace spaces with -
+        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+        .replace(/^-+/, '')             // Trim - from start of text
+        .replace(/-+$/, '');            // Trim - from end of text
+}
 
 export async function upsertSeries(data: z.infer<typeof SeriesSchema>) {
     await checkAdmin()
@@ -39,15 +49,19 @@ export async function upsertSeries(data: z.infer<typeof SeriesSchema>) {
                 title: val.title,
                 description: val.description,
                 poster: val.poster,
+                category: val.category || "Series",
                 isTrending: val.isTrending
             }
         })
     } else {
+        const slug = slugify(val.title) + (Math.floor(Math.random() * 1000)).toString(); // Simple uniqueness
         await prisma.series.create({
             data: {
                 title: val.title,
+                slug: slug,
                 description: val.description,
                 poster: val.poster,
+                category: val.category || "Series",
                 isTrending: val.isTrending
             }
         })
