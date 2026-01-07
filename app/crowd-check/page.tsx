@@ -2,7 +2,12 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useStore, Location } from "@/store/useStore";
-import Map from "@/components/Map";
+import dynamic from "next/dynamic";
+// Dynamically import Map to prevent SSR window reference error
+const Map = dynamic(() => import("@/components/Map"), {
+    ssr: false,
+    loading: () => <div className="w-full h-full bg-gray-100 animate-pulse flex items-center justify-center text-gray-400">Loading Map...</div>
+});
 import { Loader2, MapPin, AlertTriangle, CheckCircle, Info, Navigation } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

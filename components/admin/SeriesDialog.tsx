@@ -79,7 +79,7 @@ export function SeriesDialog({ series, trigger, open, onOpenChange }: SeriesDial
     return (
         <Dialog open={show} onOpenChange={setShow}>
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>{series ? "Edit Series" : "Add New Series"}</DialogTitle>
                 </DialogHeader>
