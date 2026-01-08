@@ -1,0 +1,112 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { TripSidebar } from "@/components/trip-planner/TripSidebar";
+import { findLocationsOnRoute, Coordinates } from "@/lib/routeUtils";
+
+// Dynamic import for Leaflet map to avoid SSR issues
+const TripMap = dynamic(() => import("@/components/trip-planner/TripMap"), {
+    ssr: false,
+    loading: () => <div className="w-full h-full bg-muted flex items-center justify-center">Loading Map...</div>
+});
+
+interface TripPlannerPageProps {
+    initialLocations: any[];
+}
+
+export default function TripPlannerPage({ initialLocations }: TripPlannerPageProps) {
+    const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
+    const [destination, setDestination] = useState<any | null>(null);
+    const [stops, setStops] = useState<any[]>([]);
+    const [selectedStopIds, setSelectedStopIds] = useState<Set<number | string>>(new Set());
+
+    const requestLocation = () => {
+        if (!navigator.geolocation) {
+            alert("Geolocation is not supported by your browser");
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                setUserLocation({
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                });
+            },
+            () => {
+                alert("Unable to retrieve your location");
+            }
+        );
+    };
+
+    // Recalculate stops when destination changes
+    useEffect(() => {
+        if (userLocation && destination) {
+            const destCoords = parseCoordsLike(destination.coords);
+            if (destCoords) {
+                const foundStops = findLocationsOnRoute(
+                    userLocation,
+                    destCoords,
+                    initialLocations.filter(l => l.id !== destination.id), // Exclude dest
+                    20 // 20km threshold for demo (catch more things)
+                );
+                setStops(foundStops);
+                // Select all by default
+                setSelectedStopIds(new Set(foundStops.map(s => s.id)));
+            }
+        }
+    }, [userLocation, destination, initialLocations]);
+
+    const handleSelectDestination = (loc: any) => {
+        setDestination(loc);
+        if (!userLocation) {
+            requestLocation();
+        }
+    };
+
+    const toggleStop = (id: number | string) => {
+        setSelectedStopIds(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+            return next;
+        });
+    };
+
+    return (
+        <div className="flex flex-col md:flex-row h-[calc(100vh-4rem)] overflow-hidden">
+            {/* Sidebar */}
+            <TripSidebar
+                allLocations={initialLocations}
+                onSelectDestination={handleSelectDestination}
+                stops={stops}
+                selectedStopIds={selectedStopIds}
+                onToggleStop={toggleStop}
+                userLocation={userLocation}
+                requestLocation={requestLocation}
+            />
+
+            {/* Map Area */}
+            <div className="flex-1 relative bg-gray-100">
+                <TripMap
+                    userLocation={userLocation}
+                    destination={destination ? parseCoordsLike(destination.coords) : null}
+                    stops={stops.filter(s => selectedStopIds.has(s.id))} // Only show selected on map? Or show all but style differently? Let's show selected for now for clarity
+                    onStopClick={(stop) => console.log(stop)}
+                />
+            </div>
+        </div>
+    );
+}
+
+// Helper to parse coord string
+function parseCoordsLike(coords: string): Coordinates | null {
+    try {
+        const [lat, lng] = coords.split(',').map(s => parseFloat(s.trim()));
+        if (isNaN(lat) || isNaN(lng)) return null;
+        return { lat, lng };
+    } catch { return null; }
+}

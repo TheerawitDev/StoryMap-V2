@@ -2,7 +2,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
-export function CTASection() {
+import { auth } from "@/auth";
+
+export async function CTASection() {
+    const session = await auth();
+
+    if (session?.user) {
+        return null; // Hide CTA section if user is logged in
+    }
+
     return (
         <section className="py-24 relative overflow-hidden">
             <div className="absolute inset-0 bg-gray-900 z-0">
