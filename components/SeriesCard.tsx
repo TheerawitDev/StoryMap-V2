@@ -12,27 +12,29 @@ interface SeriesCardProps {
 
 export function SeriesCard({ series }: SeriesCardProps) {
     return (
-        <Link href={`/series/${series.id}`} className="group block h-full">
+        <Link href={`/series/${series.slug}`} className="group block h-full">
             <div className="relative overflow-hidden rounded-xl border bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-1 h-full flex flex-col">
                 {/* Poster Image */}
                 <div className="aspect-[2/3] w-full bg-zinc-100 relative overflow-hidden">
                     {/* Use fallback image if poster is missing or fails */}
-                    <div className="relative w-full h-full">
-                        <Image
-                            src={series.poster || "/images/poster-default.jpg"}
-                            alt={series.title}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                            sizes="(max-width: 768px) 50vw, 25vw"
-                        />
+                    <Image
+                        src={series.poster || "/images/poster-default.jpg"}
+                        alt={series.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                    />
+                    <div className="absolute top-2 left-2 flex gap-2">
+                        {series.isTrending && (
+                            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md z-10">
+                                TRENDING
+                            </span>
+                        )}
+                        <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-1 rounded-full shadow-md z-10 border border-white/20">
+                            {series.category}
+                        </span>
                     </div>
-
-                    {/* Trending Badge */}
-                    {series.isTrending && (
-                        <div className="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-sm z-10">
-                            TRENDING
-                        </div>
-                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                 </div>
 
                 {/* Content */}

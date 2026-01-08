@@ -14,6 +14,13 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -25,6 +32,7 @@ const formSchema = z.object({
     id: z.number().optional(),
     title: z.string().min(1, "Title is required"),
     description: z.string().min(1, "Description is required"),
+    category: z.string().optional(),
     poster: z.string().min(1, "Poster image is required"),
     isTrending: z.boolean().optional(), // Removed default, handle in defaultValues
 })
@@ -51,6 +59,7 @@ export function SeriesDialog({ series, trigger, open, onOpenChange }: SeriesDial
         defaultValues: series || {
             title: "",
             description: "",
+            category: "Series",
             poster: "",
             isTrending: false
         }
@@ -60,12 +69,14 @@ export function SeriesDialog({ series, trigger, open, onOpenChange }: SeriesDial
         if (series) {
             reset({
                 ...series,
+                category: series.category || "Series",
                 isTrending: series.isTrending ?? false
             })
         } else {
             reset({
                 title: "",
                 description: "",
+                category: "Series",
                 poster: "",
                 isTrending: false
             })
@@ -101,6 +112,25 @@ export function SeriesDialog({ series, trigger, open, onOpenChange }: SeriesDial
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="space-y-2">
+                        <Label>Category</Label>
+                        <Select
+                            onValueChange={(val) => setValue("category", val)}
+                            defaultValue={watch("category") || "Series"}
+                            disabled={isLoading}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Series">Series</SelectItem>
+                                <SelectItem value="Movie">Movie</SelectItem>
+                                <SelectItem value="Music Video">Music Video</SelectItem>
+                                <SelectItem value="Other">Other</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
                     <div className="space-y-2">
                         <Label>Title</Label>
                         <Input {...register("title")} disabled={isLoading} />

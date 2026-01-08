@@ -32,6 +32,7 @@ import { ImageUpload } from "./ImageUpload"
 interface SeriesOption {
     id: number
     title: string
+    category: string
 }
 
 const formSchema = z.object({
@@ -153,7 +154,7 @@ export function LocationDialog({ location, seriesOptions, trigger, open, onOpenC
                                 <SelectContent>
                                     {seriesOptions.map(s => (
                                         <SelectItem key={s.id} value={s.id.toString()}>
-                                            {s.title}
+                                            {s.title} <span className="text-muted-foreground text-xs">({s.category})</span>
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

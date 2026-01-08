@@ -5,6 +5,8 @@ import { toggleVisit, getVisitedLocations } from '@/app/actions/user-actions';
 export interface Series {
     id: number;
     title: string;
+    slug: string;
+    category: string;
     poster: string;
     description: string;
     totalLocations: number;

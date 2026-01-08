@@ -5,23 +5,26 @@ const prisma = new PrismaClient()
 
 // Full Data Mapping from useStore.ts
 // Full Data Mapping from useStore.ts
-import { seriesData, locationData } from './data'
+import { seriesData, locationData } from './data.ts'
 
 async function main() {
     console.log(`Start seeding ...`)
 
     for (const s of seriesData) {
         const series = await prisma.series.upsert({
-            where: { id: s.id + 1 }, // Shift ID by 1 because Prisma autoincrement starts at 1 usually, but let's stick to 1-based index
+            where: { id: s.id },
             update: {
                 title: s.title,
                 poster: s.poster,
                 description: s.description,
                 isTrending: s.isTrending,
+                category: s.category,
             },
             create: {
-                id: s.id + 1,
+                id: s.id,
                 title: s.title,
+                slug: s.slug,
+                category: s.category,
                 poster: s.poster,
                 description: s.description,
                 isTrending: s.isTrending,
@@ -42,10 +45,9 @@ async function main() {
                     name: loc.name,
                     image: loc.image,
                     description: loc.description,
-                    scene: loc.scene,
                     coords: loc.coords,
                     isMajor: loc.isMajor,
-                    seriesId: loc.seriesId + 1,
+                    seriesId: loc.seriesId,
                 }
             })
         } else {
@@ -58,7 +60,7 @@ async function main() {
                     scene: loc.scene,
                     coords: loc.coords,
                     isMajor: loc.isMajor,
-                    seriesId: loc.seriesId + 1,
+                    seriesId: loc.seriesId,
                 }
             })
             console.log(`Updated location: ${loc.name}`)

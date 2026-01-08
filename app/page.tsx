@@ -26,6 +26,8 @@ export default async function Home() {
   const formattedSeries = seriesData.map(s => ({
     id: s.id,
     title: s.title,
+    slug: s.slug,
+    category: s.category,
     poster: s.poster || "",
     description: s.description,
     isTrending: s.isTrending,

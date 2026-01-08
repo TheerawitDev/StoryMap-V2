@@ -23,6 +23,7 @@ export default function SubmitSeriesPage() {
     // Form State
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [category, setCategory] = useState("Series");
     const [poster, setPoster] = useState("");
 
     // Redirect if not authenticated
@@ -48,6 +49,7 @@ export default function SubmitSeriesPage() {
                 body: JSON.stringify({
                     title,
                     description,
+                    category,
                     poster: poster || "",
                     isTrending: false // Default to false
                 }),
@@ -107,6 +109,20 @@ export default function SubmitSeriesPage() {
                                 className="mt-2 min-h-[120px]"
                                 required
                             />
+                        </div>
+
+                        <div>
+                            <Label className="text-base">หมวดหมู่ (Category) *</Label>
+                            <select
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                                className="w-full mt-2 p-3 border rounded-md bg-background"
+                                required
+                            >
+                                <option value="Series">ซีรีส์ (Series)</option>
+                                <option value="Movie">ภาพยนตร์ (Movie)</option>
+                                <option value="Music Video">มิวสิควิดีโอ (Music Video)</option>
+                            </select>
                         </div>
 
 
