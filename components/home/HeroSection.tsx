@@ -16,7 +16,7 @@ export function HeroSection({ stats }: { stats: HeroStats }) {
             {/* Background Image / Gradient */}
             <div className="absolute inset-0 z-0">
                 <Image
-                    src="/images/wat-chaiwatthanaram.jpg"
+                    src="/images/bk2.jpg"
                     alt="Thailand Travel"
                     fill
                     className="object-cover opacity-20"
