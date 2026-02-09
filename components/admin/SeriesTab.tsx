@@ -3,17 +3,11 @@
 import { useState } from "react"
 import { Edit, Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow
-} from "@/components/ui/table"
 import Image from "next/image"
 import { deleteSeries } from "@/app/actions/admin"
 import { SeriesDialog } from "./SeriesDialog"
+import { DataTable } from "@/components/ui/data-table"
+import { ColumnDef } from "@tanstack/react-table"
 
 // Define the shape of Series data expected by the admin tab
 interface Series {
@@ -53,6 +47,71 @@ export function SeriesTab({ series }: SeriesTabProps) {
         }
     }
 
+    const columns: ColumnDef<Series>[] = [
+        {
+            accessorKey: "poster",
+            header: "Poster",
+            cell: ({ row }) => (
+                <div className="relative h-12 w-8 rounded overflow-hidden bg-muted">
+                    {row.original.poster && (
+                        <Image
+                            src={row.original.poster}
+                            alt={row.original.title}
+                            fill
+                            className="object-cover"
+                        />
+                    )}
+                </div>
+            ),
+        },
+        {
+            accessorKey: "title",
+            header: "Title",
+            cell: ({ row }) => <div className="font-medium">{row.getValue("title")}</div>,
+        },
+        {
+            accessorKey: "category",
+            header: "Category",
+            cell: ({ row }) => (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {row.getValue("category") || "Series"}
+                </span>
+            ),
+        },
+        {
+            accessorKey: "description",
+            header: "Description",
+            cell: ({ row }) => <div className="max-w-[300px] truncate" title={row.getValue("description")}>{row.getValue("description")}</div>,
+        },
+        {
+            accessorKey: "isTrending",
+            header: "Trending",
+            cell: ({ row }) => <div>{row.getValue("isTrending") ? "Yes" : "No"}</div>,
+        },
+        {
+            id: "actions",
+            cell: ({ row }) => (
+                <div className="flex justify-end gap-2">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(row.original)}
+                    >
+                        <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                        onClick={() => handleDelete(row.original.id)}
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                </div>
+            ),
+        },
+    ]
+
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -62,65 +121,7 @@ export function SeriesTab({ series }: SeriesTabProps) {
                 </Button>
             </div>
 
-            <div className="border rounded-md">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[80px]">Image</TableHead>
-                            <TableHead>Title</TableHead>
-                            <TableHead>Category</TableHead>
-                            <TableHead className="hidden md:table-cell">Description</TableHead>
-                            <TableHead className="w-[100px]">Trending</TableHead>
-                            <TableHead className="w-[100px] text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {series.map((item) => (
-                            <TableRow key={item.id}>
-                                <TableCell>
-                                    <div className="relative h-12 w-8 rounded overflow-hidden bg-muted">
-                                        {item.poster && (
-                                            <Image
-                                                src={item.poster}
-                                                alt={item.title}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        )}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="font-medium">{item.title}</TableCell>
-                                <TableCell>
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        {item.category || "Series"}
-                                    </span>
-                                </TableCell>
-                                <TableCell className="hidden md:table-cell truncate max-w-xs">{item.description}</TableCell>
-                                <TableCell>{item.isTrending ? "Yes" : "No"}</TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleEdit(item)}
-                                        >
-                                            <Edit className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                                            onClick={() => handleDelete(item.id)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
+            <DataTable columns={columns} data={series} searchKey="title" />
 
             <SeriesDialog
                 open={isDialogOpen}
