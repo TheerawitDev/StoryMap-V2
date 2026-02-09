@@ -4,14 +4,6 @@ import { useState } from "react"
 import { Edit, Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow
-} from "@/components/ui/table"
-import {
     Select,
     SelectContent,
     SelectItem,
@@ -21,6 +13,8 @@ import {
 import Image from "next/image"
 import { deleteLocation } from "@/app/actions/admin"
 import { LocationDialog } from "./LocationDialog"
+import { DataTable } from "@/components/ui/data-table"
+import { ColumnDef } from "@tanstack/react-table"
 
 interface SeriesSummary {
     id: number;
@@ -74,6 +68,63 @@ export function LocationsTab({ locations, series }: LocationsTabProps) {
         ? locations
         : locations.filter(l => l.seriesId.toString() === filterSeriesId)
 
+    const columns: ColumnDef<Location>[] = [
+        {
+            accessorKey: "image",
+            header: "Image",
+            cell: ({ row }) => (
+                <div className="relative h-12 w-16 rounded overflow-hidden bg-muted">
+                    {row.original.image && (
+                        <Image
+                            src={row.original.image}
+                            alt={row.original.name}
+                            fill
+                            className="object-cover"
+                        />
+                    )}
+                </div>
+            ),
+        },
+        {
+            accessorKey: "name",
+            header: "Name",
+            cell: ({ row }) => (
+                <div>
+                    <div className="font-medium">{row.getValue("name")}</div>
+                    <div className="text-xs text-muted-foreground md:hidden">{row.original.series?.title}</div>
+                </div>
+            ),
+        },
+        {
+            accessorKey: "series.title", // Access nested data
+            // header: "Series", // Removed duplicate
+            cell: ({ row }) => <div className="hidden md:block">{row.original.series?.title}</div>,
+            header: ({ column }) => <div className="hidden md:block">Series</div>, // Hide header on mobile too if needed, but CSS in cell is easier
+        },
+        {
+            id: "actions",
+            cell: ({ row }) => (
+                <div className="flex justify-end gap-2">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(row.original)}
+                    >
+                        <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                        onClick={() => handleDelete(row.original.id)}
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                </div>
+            ),
+        },
+    ]
+
     return (
         <div className="space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -96,60 +147,7 @@ export function LocationsTab({ locations, series }: LocationsTabProps) {
                 </Button>
             </div>
 
-            <div className="border rounded-md">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[80px]">Image</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead className="hidden md:table-cell">Series</TableHead>
-                            <TableHead className="w-[100px] text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredLocations.map((item) => (
-                            <TableRow key={item.id}>
-                                <TableCell>
-                                    <div className="relative h-12 w-16 rounded overflow-hidden bg-muted">
-                                        {item.image && (
-                                            <Image
-                                                src={item.image}
-                                                alt={item.name}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        )}
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="font-medium">{item.name}</div>
-                                    <div className="text-xs text-muted-foreground md:hidden">{item.series?.title}</div>
-                                </TableCell>
-                                <TableCell className="hidden md:table-cell">{item.series?.title}</TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleEdit(item)}
-                                        >
-                                            <Edit className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                                            onClick={() => handleDelete(item.id)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
+            <DataTable columns={columns} data={filteredLocations} searchKey="name" />
 
             <LocationDialog
                 open={isDialogOpen}

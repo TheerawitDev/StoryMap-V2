@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const seriesId = searchParams.get('seriesId');
 
     try {
-        const whereClause = seriesId ? { seriesId: parseInt(seriesId) + 1 } : {}; // Handle 0-based index shift if passed from old frontend
+        const whereClause = seriesId ? { seriesId: parseInt(seriesId) } : {};
 
         const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 
         const formattedLocations = locations.map(l => ({
             id: l.id,
-            seriesId: l.seriesId - 1, // Shift back for frontend compatibility if we stick to that
+            seriesId: l.seriesId, // No shift needed, use direct DB value
             name: l.name,
             image: l.image || "/images/placeholder.jpg",
             isMajor: l.isMajor,

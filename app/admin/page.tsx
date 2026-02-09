@@ -2,6 +2,8 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Film, MapPin, Shield } from "lucide-react"
 import { SeriesTab } from "@/components/admin/SeriesTab"
 import { LocationsTab } from "@/components/admin/LocationsTab"
 import { AdminsTab } from "@/components/admin/AdminsTab"
@@ -48,6 +50,42 @@ export default async function AdminPage() {
                     <p>Welcome, {session.user.name}</p>
                     <p className="text-xs">{session.user.email}</p>
                 </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3 mb-8">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            Total Series
+                        </CardTitle>
+                        <Film className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{series.length}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            Total Locations
+                        </CardTitle>
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{locations.length}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            Admins
+                        </CardTitle>
+                        <Shield className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{admins.length}</div>
+                    </CardContent>
+                </Card>
             </div>
 
             <Tabs defaultValue="series" className="space-y-6">
