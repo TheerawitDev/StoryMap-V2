@@ -9,7 +9,7 @@ export const revalidate = 3600; // Revalidate every hour
 
 export default async function Home() {
   // Fetch data in parallel
-  const [seriesData, seriesCount, locationCount, userCount] = await Promise.all([
+  const [seriesData, seriesCount, locationCount, userCount, locationHighlights] = await Promise.all([
     prisma.series.findMany({
       where: { isTrending: true },
       take: 5,
@@ -19,7 +19,18 @@ export default async function Home() {
     }),
     prisma.series.count(),
     prisma.location.count(),
-    prisma.user.count()
+    prisma.user.count(),
+    prisma.location.findMany({
+      // Prefer major locations, then fallback to newest
+      orderBy: [
+        { isMajor: 'desc' },
+        { createdAt: 'desc' }
+      ],
+      take: 3,
+      include: {
+        series: true
+      }
+    })
   ]);
 
   // Transform Prisma data to match our UI interface
@@ -45,7 +56,7 @@ export default async function Home() {
       <HeroSection stats={stats} />
       <FeaturesSection />
       <TrendingSection series={formattedSeries} />
-      <HighlightsSection />
+      <HighlightsSection locations={locationHighlights} />
       <CTASection />
     </div>
   );
