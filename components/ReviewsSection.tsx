@@ -10,6 +10,7 @@ type Review = {
     id: string;
     rating: number;
     comment: string | null;
+    image?: string | null;
     createdAt: string | Date;
     user: {
         name: string | null;
@@ -27,8 +28,19 @@ export default function ReviewsSection({ locationId, initialReviews, isLoggedIn 
     const [reviews, setReviews] = useState<Review[]>(initialReviews);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setImageFile(file);
+            const url = URL.createObjectURL(file);
+            setPreviewUrl(url);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,10 +48,26 @@ export default function ReviewsSection({ locationId, initialReviews, isLoggedIn 
 
         setIsSubmitting(true);
         try {
+            let imageUrl = null;
+
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append("file", imageFile);
+
+                const uploadRes = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (!uploadRes.ok) throw new Error("Failed to upload image");
+                const uploadData = await uploadRes.json();
+                imageUrl = uploadData.url;
+            }
+
             const res = await fetch("/api/reviews", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ locationId, rating, comment }),
+                body: JSON.stringify({ locationId, rating, comment, image: imageUrl }),
             });
 
             if (!res.ok) throw new Error("Failed to submit review");
@@ -51,6 +79,8 @@ export default function ReviewsSection({ locationId, initialReviews, isLoggedIn 
             // Reset form (though reload will likely clear this anyway unless persisted)
             setComment("");
             setRating(0);
+            setImageFile(null);
+            setPreviewUrl(null);
         } catch (error) {
             console.error(error);
             alert("Failed to submit review");
@@ -82,6 +112,11 @@ export default function ReviewsSection({ locationId, initialReviews, isLoggedIn 
                             </div>
                             <StarRating rating={review.rating} size={16} />
                             {review.comment && <p className="mt-3 text-gray-300 leading-relaxed">{review.comment}</p>}
+                            {review.image && (
+                                <div className="mt-3 relative h-48 w-full md:w-1/2 rounded-lg overflow-hidden">
+                                    <img src={review.image} alt="Review attachment" className="object-cover w-full h-full" />
+                                </div>
+                            )}
                         </div>
                     ))
                 ) : (
@@ -104,11 +139,42 @@ export default function ReviewsSection({ locationId, initialReviews, isLoggedIn 
                     <div className="mb-6">
                         <label className="block mb-2 text-sm font-medium text-gray-300">Comment (Optional)</label>
                         <textarea
-                            className="w-full p-3 rounded-lg bg-black/40 border border-white/10 text-white min-h-[120px] focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder:text-gray-600"
+                            className="w-full p-3 rounded-lg bg-black/40 border border-white/10 text-white min-h-[120px] focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all placeholder:text-gray-600 mb-4"
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                             placeholder="Share your thoughts about this place..."
                         />
+
+                        <label className="block mb-2 text-sm font-medium text-gray-300">Add Photo (Optional)</label>
+                        <div className="flex items-center gap-4">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="block w-full text-sm text-gray-400
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-full file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-blue-600 file:text-white
+                                hover:file:bg-blue-700
+                                cursor-pointer"
+                            />
+                        </div>
+                        {previewUrl && (
+                            <div className="mt-4 relative h-32 w-32 rounded-lg overflow-hidden border border-white/20">
+                                <img src={previewUrl} alt="Preview" className="object-cover w-full h-full" />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setImageFile(null);
+                                        setPreviewUrl(null);
+                                    }}
+                                    className="absolute top-1 right-1 bg-black/50 hover:bg-black/70 text-white rounded-full p-1"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        )}
                     </div>
                     <button
                         type="submit"
