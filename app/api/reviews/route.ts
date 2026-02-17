@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { rating, comment, locationId } = body;
+        const { rating, comment, locationId, image } = body;
 
         if (!rating || !locationId) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -46,6 +46,7 @@ export async function POST(request: Request) {
             data: {
                 rating: parseInt(rating),
                 comment,
+                image,
                 userId: session.user.id,
                 locationId: parseInt(locationId),
             },
