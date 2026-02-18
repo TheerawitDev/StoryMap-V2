@@ -34,10 +34,17 @@ export default function SeriesDetailPage() {
         return <div className="p-20 text-center">Loading or Series Not Found...</div>;
     }
 
-    // Calculate center for map based on first location
-    const firstLoc = locations[0];
-    const mapCenter = (firstLoc && typeof firstLoc.coords === 'string')
-        ? firstLoc.coords.split(",").map((c: string) => parseFloat(c.trim())) as [number, number]
+    // Calculate center for map based on first valid location
+    const firstValidLoc = locations.find((l: any) => {
+        if (!l.coords || typeof l.coords !== 'string') return false;
+        const parts = l.coords.split(",");
+        if (parts.length !== 2) return false;
+        const [lat, lng] = parts.map((c: string) => parseFloat(c.trim()));
+        return !isNaN(lat) && !isNaN(lng);
+    });
+
+    const mapCenter = firstValidLoc
+        ? firstValidLoc.coords.split(",").map((c: string) => parseFloat(c.trim())) as [number, number]
         : [13.7563, 100.5018] as [number, number];
 
     // Calculate progress
