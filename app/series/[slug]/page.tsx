@@ -36,7 +36,7 @@ export default function SeriesDetailPage() {
 
     // Calculate center for map based on first location
     const firstLoc = locations[0];
-    const mapCenter = firstLoc
+    const mapCenter = (firstLoc && typeof firstLoc.coords === 'string')
         ? firstLoc.coords.split(",").map((c: string) => parseFloat(c.trim())) as [number, number]
         : [13.7563, 100.5018] as [number, number];
 
@@ -82,13 +82,19 @@ export default function SeriesDetailPage() {
                         {/* Series Main Card */}
                         <div className="bg-white p-6 rounded-2xl shadow-sm border">
                             <div className="aspect-[2/3] w-full bg-zinc-100 rounded-lg mb-6 relative overflow-hidden">
-                                <Image
-                                    src={activeSeries.poster}
-                                    alt={activeSeries.title}
-                                    fill
-                                    className="object-cover"
-                                    priority
-                                />
+                                {activeSeries.poster ? (
+                                    <Image
+                                        src={activeSeries.poster}
+                                        alt={activeSeries.title}
+                                        fill
+                                        className="object-cover"
+                                        priority
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                        <Film className="w-16 h-16 text-gray-400" />
+                                    </div>
+                                )}
                                 <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
                                     {activeSeries.isTrending && (
                                         <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
