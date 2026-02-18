@@ -76,6 +76,7 @@ export default function Map({ center, zoom, locations: propLocations, interactiv
             {!propLocations && <MapController />}
 
             {locationsToRender.map((loc) => {
+                if (!loc.coords || typeof loc.coords !== 'string') return null;
                 const [lat, lng] = loc.coords.split(",").map((c: string) => parseFloat(c.trim()));
                 // Skip invalid coordinates
                 if (isNaN(lat) || isNaN(lng)) return null;
