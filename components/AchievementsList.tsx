@@ -116,7 +116,7 @@ export function AchievementsList() {
                                 )}
                             >
                                 <div className="relative w-16 h-20 shrink-0 rounded-lg overflow-hidden bg-gray-100">
-                                    <img src={item.image} alt="" className={cn("object-cover w-full h-full", !item.isUnlocked && "grayscale")} />
+                                    <img src={item.image || undefined} alt="" className={cn("object-cover w-full h-full", !item.isUnlocked && "grayscale")} />
                                     {item.isUnlocked && (
                                         <div className="absolute inset-0 bg-yellow-500/20 flex items-center justify-center">
                                             <Star className="w-8 h-8 text-yellow-400 drop-shadow-md fill-yellow-400" />
