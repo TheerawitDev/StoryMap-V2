@@ -7,7 +7,7 @@ export interface Series {
     title: string;
     slug: string;
     category: string;
-    poster: string;
+    poster: string | null;
     description: string;
     totalLocations: number;
     isTrending: boolean;
