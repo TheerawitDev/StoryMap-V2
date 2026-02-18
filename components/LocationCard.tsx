@@ -29,13 +29,19 @@ export function LocationCard({ location, seriesTitle, layout = "horizontal" }: L
                     "bg-gray-100 rounded-lg shrink-0 relative overflow-hidden",
                     isVertical ? "w-full h-48" : "w-full md:w-48 h-48 md:h-auto"
                 )}>
-                    <Image
-                        src={location.image}
-                        alt={location.name}
-                        fill
-                        className="object-cover"
-                        sizes={isVertical ? "(max-width: 768px) 100vw, 400px" : "(max-width: 768px) 100vw, 200px"}
-                    />
+                    {location.image ? (
+                        <Image
+                            src={location.image}
+                            alt={location.name}
+                            fill
+                            className="object-cover"
+                            sizes={isVertical ? "(max-width: 768px) 100vw, 400px" : "(max-width: 768px) 100vw, 200px"}
+                        />
+                    ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <MapPin className="w-8 h-8 text-gray-400" />
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex-1 flex flex-col">
