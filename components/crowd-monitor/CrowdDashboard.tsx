@@ -5,6 +5,7 @@ import { LocationPermissionRequest } from "./LocationPermissionRequest";
 import { LocationStatusCard, LocationData } from "./LocationStatusCard";
 import { AlternativeSuggestions } from "./AlternativeSuggestions";
 import { Loader2 } from "lucide-react";
+import { useCrowdData } from "@/lib/crowdUtils";
 
 interface CrowdDashboardProps {
     initialLocations: Omit<LocationData, "visitorCount" | "capacity">[];

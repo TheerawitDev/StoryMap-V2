@@ -1,25 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { Search, MapPin, Navigation, ArrowRight } from "lucide-react";
+import { Search, MapPin, Navigation, ArrowRight, AlertTriangle, Users, ArrowLeftRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Coordinates, parseCoords, getDistance } from "@/lib/routeUtils";
+import { getAlternatives, CrowdLocationData } from "@/lib/crowdUtils";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface TripSidebarProps {
-    allLocations: any[];
+    allLocations: CrowdLocationData[];
     onSelectDestination: (location: any) => void;
-    stops: any[];
+    stops: CrowdLocationData[];
     selectedStopIds: Set<number | string>;
     onToggleStop: (id: number | string) => void;
     userLocation: Coordinates | null;
     requestLocation: () => void;
+    onUpdateStops?: (newStops: CrowdLocationData[], newSelectedIds: Set<number | string>) => void;
 }
 
-export function TripSidebar({ allLocations, onSelectDestination, stops, selectedStopIds, onToggleStop, userLocation, requestLocation }: TripSidebarProps) {
+export function TripSidebar({ allLocations, onSelectDestination, stops, selectedStopIds, onToggleStop, userLocation, requestLocation, onUpdateStops }: TripSidebarProps) {
     const [search, setSearch] = useState("");
     const [selectedDest, setSelectedDest] = useState<any | null>(null);
+    const [suggestionModalOpen, setSuggestionModalOpen] = useState(false);
+    const [targetStopForSwap, setTargetStopForSwap] = useState<CrowdLocationData | null>(null);
+    const [alternatives, setAlternatives] = useState<CrowdLocationData[]>([]);
 
     const filteredLocations = allLocations.filter(loc =>
         loc.name.toLowerCase().includes(search.toLowerCase())
@@ -29,6 +42,49 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
         setSelectedDest(loc);
         onSelectDestination(loc);
         setSearch(""); // clear search to show selection state
+    };
+
+    const handleFindAlternative = (stop: CrowdLocationData) => {
+        const alts = getAlternatives(stop, allLocations);
+        setAlternatives(alts);
+        setTargetStopForSwap(stop);
+        setSuggestionModalOpen(true);
+    };
+
+    const handleSwapStop = (newStop: CrowdLocationData) => {
+        if (!targetStopForSwap || !onUpdateStops) return;
+
+        // Replace the stop in the list but keep position if possible
+        const newStops = stops.map(s => s.id === targetStopForSwap.id ? newStop : s);
+
+        // Update selection: remove old, add new
+        const newSelected = new Set(selectedStopIds);
+        if (newSelected.has(targetStopForSwap.id)) {
+            newSelected.delete(targetStopForSwap.id);
+            newSelected.add(newStop.id);
+        }
+
+        onUpdateStops(newStops, newSelected);
+        setSuggestionModalOpen(false);
+        setTargetStopForSwap(null);
+    };
+
+    const handleAddStop = (newStop: CrowdLocationData) => {
+        if (!onUpdateStops) return;
+
+        // Add to list if not exists
+        let newStops = [...stops];
+        if (!newStops.find(s => s.id === newStop.id)) {
+            newStops.push(newStop);
+            // Re-sort by distance might be needed, but simplified here
+        }
+
+        const newSelected = new Set(selectedStopIds);
+        newSelected.add(newStop.id);
+
+        onUpdateStops(newStops, newSelected);
+        setSuggestionModalOpen(false);
+        setTargetStopForSwap(null);
     };
 
     return (
@@ -210,6 +266,53 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
                     )}
                 </div>
             </div>
+            {/* Alternatives Dialog */}
+            <Dialog open={suggestionModalOpen} onOpenChange={setSuggestionModalOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>แนะนำสถานที่ทางเลือก (Suggested Alternatives)</DialogTitle>
+                        <DialogDescription>
+                            สถานที่ "{targetStopForSwap?.name}" คนหนาแน่นมาก ลองไปที่เหล่านี้แทนไหม?
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-3 mt-2">
+                        {alternatives.length > 0 ? alternatives.map(alt => (
+                            <Card key={alt.id} className="overflow-hidden hover:bg-muted/50 transition-colors">
+                                <CardContent className="p-3 flex items-center gap-3">
+                                    <div className="w-16 h-16 rounded-md bg-muted overflow-hidden flex-shrink-0 relative">
+                                        {alt.image ? (
+                                            <img src={alt.image} alt={alt.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <MapPin className="w-6 h-6 m-auto text-muted-foreground" />
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="font-medium text-sm">{alt.name}</h4>
+                                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                                            <span className="text-green-600 font-medium">คนน้อยกว่า</span>
+                                            <span>•</span>
+                                            <span>ห่างออกไป {alt.distance.toFixed(1)} กม.</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <Button size="sm" variant="secondary" className="h-7 text-xs" onClick={() => handleSwapStop(alt)}>
+                                            <ArrowLeftRight className="w-3 h-3 mr-1" /> เปลี่ยน
+                                        </Button>
+                                        <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => handleAddStop(alt)}>
+                                            <Plus className="w-3 h-3 mr-1" /> เพิ่ม
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )) : (
+                            <div className="text-center py-4 text-muted-foreground">
+                                ไม่พบสถานที่ทางเลือกในบริเวณใกล้เคียง
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

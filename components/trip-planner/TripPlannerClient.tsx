@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { TripSidebar } from "@/components/trip-planner/TripSidebar";
 import { findLocationsOnRoute, Coordinates } from "@/lib/routeUtils";
+import { useCrowdData } from "@/lib/crowdUtils";
 
 // Dynamic import for Leaflet map to avoid SSR issues
 const TripMap = dynamic(() => import("@/components/trip-planner/TripMap"), {
@@ -20,6 +21,9 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
     const [destination, setDestination] = useState<any | null>(null);
     const [stops, setStops] = useState<any[]>([]);
     const [selectedStopIds, setSelectedStopIds] = useState<Set<number | string>>(new Set());
+
+    // Get live crowd data
+    const liveLocations = useCrowdData(initialLocations);
 
     const requestLocation = () => {
         if (!navigator.geolocation) {
@@ -47,7 +51,7 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
                 const foundStops = findLocationsOnRoute(
                     userLocation,
                     destCoords,
-                    initialLocations.filter(l => l.id !== destination.id), // Exclude dest
+                    liveLocations.filter(l => l.id !== destination.id), // Exclude dest
                     20 // 20km threshold for demo (catch more things)
                 );
                 setStops(foundStops);
@@ -55,7 +59,7 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
                 setSelectedStopIds(new Set());
             }
         }
-    }, [userLocation, destination, initialLocations]);
+    }, [userLocation, destination, liveLocations]);
 
     const handleSelectDestination = (loc: any) => {
         setDestination(loc);
@@ -80,13 +84,18 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
         <div className="flex flex-col md:flex-row h-[calc(100vh-4rem)] overflow-hidden">
             {/* Sidebar */}
             <TripSidebar
-                allLocations={initialLocations}
+                allLocations={liveLocations}
                 onSelectDestination={handleSelectDestination}
                 stops={stops}
                 selectedStopIds={selectedStopIds}
                 onToggleStop={toggleStop}
                 userLocation={userLocation}
                 requestLocation={requestLocation}
+                // Helper to change stops from sidebar
+                onUpdateStops={(newStops, newSelectedIds) => {
+                    setStops(newStops);
+                    setSelectedStopIds(newSelectedIds);
+                }}
             />
 
             {/* Map Area */}
