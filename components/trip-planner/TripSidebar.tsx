@@ -288,7 +288,6 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
                                     <Button
                                         className="w-full mt-4"
                                         size="lg"
-                                        disabled={selectedStopIds.size === 0}
                                         onClick={() => {
                                             if (!userLocation || !selectedDest) return;
 
@@ -302,7 +301,11 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
                                                 .map(s => s.coords.replace(/\s/g, ''))
                                                 .join('|');
 
-                                            const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&waypoints=${waypoints}&travelmode=driving`;
+                                            let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`;
+                                            if (waypoints) {
+                                                url += `&waypoints=${waypoints}`;
+                                            }
+
                                             window.open(url, '_blank');
                                         }}
                                     >
