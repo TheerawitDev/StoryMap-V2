@@ -417,6 +417,5 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
                 </DialogContent>
             </Dialog>
         </div>
-        </div >
     );
 }
