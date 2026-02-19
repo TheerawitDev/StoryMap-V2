@@ -5,6 +5,7 @@ import { LocationPermissionRequest } from "./LocationPermissionRequest";
 import { LocationStatusCard, LocationData } from "./LocationStatusCard";
 import { AlternativeSuggestions } from "./AlternativeSuggestions";
 import { Loader2 } from "lucide-react";
+import { useCrowdData } from "@/lib/crowdUtils";
 
 interface CrowdDashboardProps {
     initialLocations: Omit<LocationData, "visitorCount" | "capacity">[];
@@ -18,12 +19,16 @@ export function CrowdDashboard({ initialLocations }: CrowdDashboardProps) {
     const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
     const [loading, setLoading] = useState(false);
 
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filter, setFilter] = useState<'all' | 'low' | 'moderate' | 'high'>('all');
+
     // Initialize locations with random simulated data
     useEffect(() => {
         const simulated = initialLocations.map(loc => ({
             ...loc,
             visitorCount: Math.floor(Math.random() * 200), // Random 0-200
-            capacity: 150 // Fixed capacity for demo
+            capacity: 150, // Fixed capacity for demo
+            trend: 'stable' as const
         }));
         setLocations(simulated);
     }, [initialLocations]);
@@ -37,7 +42,12 @@ export function CrowdDashboard({ initialLocations }: CrowdDashboardProps) {
                 // Randomly fluctuate visitor count by -5 to +5
                 const change = Math.floor(Math.random() * 11) - 5;
                 const newCount = Math.max(0, Math.min(loc.capacity * 1.2, loc.visitorCount + change)); // Cap at 120% capacity
-                return { ...loc, visitorCount: Math.round(newCount) };
+
+                let trend: 'up' | 'down' | 'stable' = 'stable';
+                if (newCount > loc.visitorCount) trend = 'up';
+                else if (newCount < loc.visitorCount) trend = 'down';
+
+                return { ...loc, visitorCount: Math.round(newCount), trend };
             }));
         }, 3000); // Update every 3 seconds
 
@@ -120,6 +130,19 @@ export function CrowdDashboard({ initialLocations }: CrowdDashboardProps) {
             .slice(0, 3); // Top 3
     };
 
+    // Filter Logic
+    const filteredLocations = locations.filter(loc => {
+        const matchesSearch = loc.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const density = loc.visitorCount / loc.capacity;
+        let matchesFilter = true;
+
+        if (filter === 'low') matchesFilter = density <= 0.5;
+        else if (filter === 'moderate') matchesFilter = density > 0.5 && density <= 0.8;
+        else if (filter === 'high') matchesFilter = density > 0.8;
+
+        return matchesSearch && matchesFilter;
+    });
+
     if (!hasPermission) {
         return (
             <LocationPermissionRequest
@@ -139,13 +162,42 @@ export function CrowdDashboard({ initialLocations }: CrowdDashboardProps) {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="text-center md:text-left">
-                <h2 className="text-2xl font-bold tracking-tight">สถานการณ์ความหนาแน่น (Live Crowd Monitor)</h2>
-                <p className="text-muted-foreground">ข้อมูลผู้เข้าชมแบบเรียลไทม์และคำแนะนำสถานที่ท่องเที่ยว</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="text-center md:text-left">
+                    <h2 className="text-2xl font-bold tracking-tight">สถานการณ์ความหนาแน่น (Live Crowd Monitor)</h2>
+                    <p className="text-muted-foreground">ข้อมูลผู้เข้าชมแบบเรียลไทม์และคำแนะนำสถานที่ท่องเที่ยว</p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                        type="text"
+                        placeholder="ค้นหาสถานที่..."
+                        className="px-3 py-2 border rounded-md text-sm w-full sm:w-[200px]"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <div className="flex bg-muted p-1 rounded-md">
+                        {(['all', 'low', 'moderate', 'high'] as const).map((f) => (
+                            <button
+                                key={f}
+                                onClick={() => setFilter(f)}
+                                className={`px-3 py-1.5 text-xs font-medium rounded-sm transition-all ${filter === f
+                                    ? 'bg-background shadow text-foreground'
+                                    : 'text-muted-foreground hover:text-foreground'
+                                    }`}
+                            >
+                                {f === 'all' && 'ทั้งหมด'}
+                                {f === 'low' && 'ว่าง'}
+                                {f === 'moderate' && 'ปานกลาง'}
+                                {f === 'high' && 'หนาแน่น'}
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {locations.map((location) => (
+                {filteredLocations.map((location) => (
                     <div key={location.id} className="space-y-4">
                         <LocationStatusCard
                             location={location}
@@ -163,6 +215,12 @@ export function CrowdDashboard({ initialLocations }: CrowdDashboardProps) {
                         )}
                     </div>
                 ))}
+
+                {filteredLocations.length === 0 && (
+                    <div className="col-span-full text-center py-12 text-muted-foreground">
+                        ไม่พบสถานที่ที่ค้นหา
+                    </div>
+                )}
             </div>
 
             {userLocation && (
