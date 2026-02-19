@@ -40,7 +40,7 @@ export function getDistance(p1: Coordinates, p2: Coordinates): number {
 /**
  * Calculates the shortest distance from a point P to a line segment AB.
  */
-function distanceFromLineSegment(p: Coordinates, a: Coordinates, b: Coordinates): number {
+export function distanceFromLineSegment(p: Coordinates, a: Coordinates, b: Coordinates): number {
     const R = 6371;
     // Proper geometric distance from point to line segment on a sphere is complex.
     // We will approximate by projecting to flat plane for short distances, 

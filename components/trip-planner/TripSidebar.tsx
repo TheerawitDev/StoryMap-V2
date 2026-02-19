@@ -5,7 +5,7 @@ import { Search, MapPin, Navigation, ArrowRight, AlertTriangle, Users, ArrowLeft
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Coordinates, parseCoords, getDistance } from "@/lib/routeUtils";
+import { Coordinates, parseCoords, getDistance, distanceFromLineSegment } from "@/lib/routeUtils";
 import { getAlternatives, CrowdLocationData } from "@/lib/crowdUtils";
 import { getNearbyBusinesses, convertBusinessToLocation, LocalBusiness } from "@/lib/localBusinessUtils";
 import {
@@ -82,7 +82,20 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
     };
 
     const handleAddStop = (newStop: CrowdLocationData) => {
-        if (!onUpdateStops) return;
+        if (!onUpdateStops || !userLocation || !selectedDest) return;
+
+        // Calculate required metrics for the trip planner
+        const stopCoords = parseCoords(newStop.coords);
+        const startCoords = userLocation;
+        const destCoords = parseCoords(selectedDest.coords);
+
+        if (stopCoords && startCoords && destCoords) {
+            newStop = {
+                ...newStop,
+                distanceFromRoute: distanceFromLineSegment(stopCoords, startCoords, destCoords),
+                distanceFromStart: getDistance(startCoords, stopCoords)
+            };
+        }
 
         // Add to list if not exists
         let newStops = [...stops];
