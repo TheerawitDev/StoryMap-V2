@@ -51,8 +51,8 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
                     20 // 20km threshold for demo (catch more things)
                 );
                 setStops(foundStops);
-                // Select all by default
-                setSelectedStopIds(new Set(foundStops.map(s => s.id)));
+                // Do not select by default - let user choose
+                setSelectedStopIds(new Set());
             }
         }
     }, [userLocation, destination, initialLocations]);
