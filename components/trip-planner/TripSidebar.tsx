@@ -285,33 +285,7 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
                                         </div>
                                     )}
 
-                                    <Button
-                                        className="w-full mt-4"
-                                        size="lg"
-                                        onClick={() => {
-                                            if (!userLocation || !selectedDest) return;
 
-                                            const origin = `${userLocation.lat},${userLocation.lng}`;
-                                            const dest = selectedDest.coords;
-
-                                            // Filter only selected stops
-                                            const waypoints = stops
-                                                .filter(s => selectedStopIds.has(s.id))
-                                                .slice(0, 8) // Google Maps limit
-                                                .map(s => s.coords.replace(/\s/g, ''))
-                                                .join('|');
-
-                                            let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`;
-                                            if (waypoints) {
-                                                url += `&waypoints=${waypoints}`;
-                                            }
-
-                                            window.open(url, '_blank');
-                                        }}
-                                    >
-                                        <Navigation className="w-4 h-4 mr-2" />
-                                        เริ่มนำทาง ({selectedStopIds.size} stops)
-                                    </Button>
                                 </div>
                             )}
 
@@ -364,6 +338,33 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
                                     </div>
                                 </div>
                             )}
+                            <Button
+                                className="w-full mt-4"
+                                size="lg"
+                                onClick={() => {
+                                    if (!userLocation || !selectedDest) return;
+
+                                    const origin = `${userLocation.lat},${userLocation.lng}`;
+                                    const dest = selectedDest.coords;
+
+                                    // Filter only selected stops
+                                    const waypoints = stops
+                                        .filter(s => selectedStopIds.has(s.id))
+                                        .slice(0, 8) // Google Maps limit
+                                        .map(s => s.coords.replace(/\s/g, ''))
+                                        .join('|');
+
+                                    let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`;
+                                    if (waypoints) {
+                                        url += `&waypoints=${waypoints}`;
+                                    }
+
+                                    window.open(url, '_blank');
+                                }}
+                            >
+                                <Navigation className="w-4 h-4 mr-2" />
+                                เริ่มนำทาง ({selectedStopIds.size} stops)
+                            </Button>
                         </div>
                     )}
                 </div>
