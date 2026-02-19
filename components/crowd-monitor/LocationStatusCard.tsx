@@ -1,8 +1,9 @@
 "use client";
 
-import { Users, MapPin, AlertTriangle } from "lucide-react";
+import { Users, MapPin, AlertTriangle, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+
 
 export interface LocationData {
     id: number;
@@ -11,6 +12,7 @@ export interface LocationData {
     capacity: number;
     image?: string | null;
     coords: string;
+    trend?: 'up' | 'down' | 'stable';
 }
 
 interface LocationStatusCardProps {
@@ -60,25 +62,52 @@ export function LocationStatusCard({ location, onClick }: LocationStatusCardProp
                 </div>
 
                 {/* Content Section */}
-                <div className="flex-1 p-4">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                        <h3 className="font-semibold text-lg line-clamp-1">{location.name}</h3>
-                        {density > 0.8 && (
-                            <AlertTriangle className="w-5 h-5 text-red-500 animate-pulse flex-shrink-0" />
-                        )}
+                <div className="flex-1 p-4 flex flex-col justify-between">
+                    <div>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                            <h3 className="font-semibold text-lg line-clamp-1">{location.name}</h3>
+                            {density > 0.8 && (
+                                <AlertTriangle className="w-5 h-5 text-red-500 animate-pulse flex-shrink-0" />
+                            )}
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2", "font-normal border-0", statusBg, density > 0.8 ? "text-red-700 dark:text-red-400" : density > 0.5 ? "text-yellow-700 dark:text-yellow-400" : "text-green-700 dark:text-green-400")}>
+                                {statusText}
+                            </span>
+
+                            {/* Trend Indicator */}
+                            {location.trend && (
+                                <div className="flex items-center text-xs text-muted-foreground gap-1">
+                                    {location.trend === 'up' && <TrendingUp className="w-3 h-3 text-red-500" />}
+                                    {location.trend === 'down' && <TrendingDown className="w-3 h-3 text-green-500" />}
+                                    {location.trend === 'stable' && <Minus className="w-3 h-3" />}
+                                    <span>
+                                        {location.trend === 'up' ? 'คนเพิ่มขึ้น' : location.trend === 'down' ? 'คนลดลง' : 'คงที่'}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="flex items-center gap-2 mb-3">
-                        <span className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2", "font-normal border-0", statusBg, density > 0.8 ? "text-red-700 dark:text-red-400" : density > 0.5 ? "text-yellow-700 dark:text-yellow-400" : "text-green-700 dark:text-green-400")}>
-                            {statusText}
-                        </span>
-                    </div>
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between text-sm text-muted-foreground">
+                            <div className="flex items-center">
+                                <Users className="w-4 h-4 mr-1.5" />
+                                <span className="font-medium text-foreground">{location.visitorCount}</span>
+                                <span className="mx-1">/</span>
+                                <span>{location.capacity}</span>
+                            </div>
+                            <span className="text-xs">{Math.min(100, Math.round(density * 100))}%</span>
+                        </div>
 
-                    <div className="flex items-center text-sm text-muted-foreground">
-                        <Users className="w-4 h-4 mr-1.5" />
-                        <span className="font-medium text-foreground">{location.visitorCount}</span>
-                        <span className="mx-1">/</span>
-                        <span>{location.capacity} คน (visitors)</span>
+                        {/* Custom Progress Bar since UI component might use different color props */}
+                        <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
+                            <div
+                                className={cn("h-full transition-all duration-500", statusColor)}
+                                style={{ width: `${Math.min(100, density * 100)}%` }}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
