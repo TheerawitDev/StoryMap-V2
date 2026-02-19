@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, MapPin, Navigation, ArrowRight, AlertTriangle, Users, ArrowLeftRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Coordinates, parseCoords, getDistance } from "@/lib/routeUtils";
 import { getAlternatives, CrowdLocationData } from "@/lib/crowdUtils";
+import { getNearbyBusinesses, convertBusinessToLocation, LocalBusiness } from "@/lib/localBusinessUtils";
 import {
     Dialog,
     DialogContent,
@@ -33,10 +34,21 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
     const [suggestionModalOpen, setSuggestionModalOpen] = useState(false);
     const [targetStopForSwap, setTargetStopForSwap] = useState<CrowdLocationData | null>(null);
     const [alternatives, setAlternatives] = useState<CrowdLocationData[]>([]);
+    const [nearbyBusinesses, setNearbyBusinesses] = useState<LocalBusiness[]>([]);
 
     const filteredLocations = allLocations.filter(loc =>
         loc.name.toLowerCase().includes(search.toLowerCase())
     ).slice(0, 5);
+
+    // Fetch local businesses when destination is selected
+    useEffect(() => {
+        if (selectedDest) {
+            const businesses = getNearbyBusinesses({ coords: selectedDest.coords });
+            setNearbyBusinesses(businesses);
+        } else {
+            setNearbyBusinesses([]);
+        }
+    }, [selectedDest]);
 
     const handleSelect = (loc: any) => {
         setSelectedDest(loc);
@@ -262,6 +274,56 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
                                 <Navigation className="w-4 h-4 mr-2" />
                                 เริ่มนำทาง ({selectedStopIds.size} stops)
                             </Button>
+                        </div>
+                    )}
+
+                    {/* Support Local Section */}
+                    {selectedDest && nearbyBusinesses.length > 0 && (
+                        <div className="space-y-3 pt-4 border-t animate-in fade-in slide-in-from-bottom-5">
+                            <div className="flex items-center gap-2">
+                                <h3 className="font-semibold text-lg flex items-center gap-2">
+                                    🛍️ อุดหนุนร้านท้องถิ่น
+                                </h3>
+                                <span className="bg-orange-100 text-orange-700 text-[10px] font-bold px-1.5 py-0.5 rounded">
+                                    Support Local
+                                </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                ร้านค้าแนะนำใกล้ {selectedDest.name}
+                            </p>
+
+                            <div className="grid gap-3">
+                                {nearbyBusinesses.map(biz => (
+                                    <div key={biz.id} className="flex gap-3 p-3 bg-orange-50/50 border border-orange-100 rounded-lg hover:bg-orange-50 transition-colors">
+                                        <div className="w-16 h-16 rounded-md bg-muted overflow-hidden flex-shrink-0">
+                                            {biz.image ? (
+                                                <img src={biz.image} alt={biz.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-orange-100 text-orange-300">
+                                                    <MapPin size={24} />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-medium text-sm line-clamp-1">{biz.name}</h4>
+                                            <p className="text-xs text-muted-foreground line-clamp-1">{biz.description}</p>
+                                            {biz.recommendedItem && (
+                                                <span className="text-[10px] text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded-full inline-block mt-1">
+                                                    ⭐ {biz.recommendedItem}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="h-8 w-8 p-0 shrink-0 text-orange-600 hover:text-orange-700 hover:bg-orange-100"
+                                            onClick={() => handleAddStop(convertBusinessToLocation(biz))}
+                                        >
+                                            <Plus className="w-5 h-5" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>
