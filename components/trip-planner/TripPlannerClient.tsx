@@ -94,8 +94,9 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
                 <TripMap
                     userLocation={userLocation}
                     destination={destination ? parseCoordsLike(destination.coords) : null}
-                    stops={stops.filter(s => selectedStopIds.has(s.id))} // Only show selected on map? Or show all but style differently? Let's show selected for now for clarity
-                    onStopClick={(stop) => console.log(stop)}
+                    stops={stops}
+                    selectedStopIds={selectedStopIds}
+                    onToggleStop={toggleStop}
                 />
             </div>
         </div>
