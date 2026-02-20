@@ -24,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th">
-      <body className={`${kanit.variable} font-sans antialiased bg-gray-50 text-gray-900 flex flex-col min-h-screen`}>
+    <html lang="th" suppressHydrationWarning>
+      <body className={`${kanit.variable} font-sans antialiased bg-gray-50 text-gray-900 flex flex-col min-h-screen`} suppressHydrationWarning>
         <Providers>
           <Navbar />
           <StoreInitializer />

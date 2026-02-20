@@ -18,16 +18,20 @@ interface TripPlannerPageProps {
 
 export default function TripPlannerPage({ initialLocations }: TripPlannerPageProps) {
     const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
+    const [isLocating, setIsLocating] = useState(false);
     const [destination, setDestination] = useState<any | null>(null);
     const [stops, setStops] = useState<any[]>([]);
     const [selectedStopIds, setSelectedStopIds] = useState<Set<number | string>>(new Set());
+    const [lastDestId, setLastDestId] = useState<string | number | null>(null);
 
     // Get live crowd data
     const liveLocations = useCrowdData(initialLocations);
 
     const requestLocation = () => {
+        setIsLocating(true);
         if (!navigator.geolocation) {
             alert("Geolocation is not supported by your browser");
+            setIsLocating(false);
             return;
         }
         navigator.geolocation.getCurrentPosition(
@@ -36,10 +40,13 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 });
+                setIsLocating(false);
             },
             () => {
                 alert("Unable to retrieve your location");
-            }
+                setIsLocating(false);
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
     };
 
@@ -52,14 +59,33 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
                     userLocation,
                     destCoords,
                     liveLocations.filter(l => l.id !== destination.id), // Exclude dest
-                    20 // 20km threshold for demo (catch more things)
+                    20 // 20km threshold for demo
                 );
                 setStops(foundStops);
-                // Do not select by default - let user choose
-                setSelectedStopIds(new Set());
+
+                // Only reset selected stops if the destination fundamentally changed
+                if (destination.id !== lastDestId) {
+                    setSelectedStopIds(new Set());
+                    setLastDestId(destination.id);
+                } else {
+                    // Clean up any stale selected stops just in case, but keep user choices
+                    setSelectedStopIds(prev => {
+                        const validIds = new Set(foundStops.map(s => s.id));
+                        const next = new Set<string | number>();
+                        prev.forEach(id => {
+                            if (validIds.has(id)) next.add(id);
+                        });
+                        return next;
+                    });
+                }
             }
+        } else {
+            // Reset if no active destination
+            setStops([]);
+            setSelectedStopIds(new Set());
+            setLastDestId(null);
         }
-    }, [userLocation, destination, liveLocations]);
+    }, [userLocation, destination, liveLocations, lastDestId]);
 
     const handleSelectDestination = (loc: any) => {
         setDestination(loc);
@@ -86,11 +112,14 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
             <TripSidebar
                 allLocations={liveLocations}
                 onSelectDestination={handleSelectDestination}
+                selectedDestination={destination}
+                onClearDestination={() => setDestination(null)}
                 stops={stops}
                 selectedStopIds={selectedStopIds}
                 onToggleStop={toggleStop}
                 userLocation={userLocation}
                 requestLocation={requestLocation}
+                isLocating={isLocating}
                 // Helper to change stops from sidebar
                 onUpdateStops={(newStops, newSelectedIds) => {
                     setStops(newStops);

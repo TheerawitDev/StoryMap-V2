@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, MapPin, Navigation, ArrowRight, AlertTriangle, Users, ArrowLeftRight, Plus } from "lucide-react";
+import { Search, MapPin, Navigation, ArrowRight, X, Loader2, ArrowLeftRight, Plus, Route, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,54 +14,62 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
 
 interface TripSidebarProps {
     allLocations: CrowdLocationData[];
     onSelectDestination: (location: any) => void;
+    selectedDestination: any | null;
+    onClearDestination: () => void;
     stops: CrowdLocationData[];
     selectedStopIds: Set<number | string>;
     onToggleStop: (id: number | string) => void;
     userLocation: Coordinates | null;
     requestLocation: () => void;
+    isLocating: boolean;
     onUpdateStops?: (newStops: CrowdLocationData[], newSelectedIds: Set<number | string>) => void;
 }
 
-export function TripSidebar({ allLocations, onSelectDestination, stops, selectedStopIds, onToggleStop, userLocation, requestLocation, onUpdateStops }: TripSidebarProps) {
+export function TripSidebar({
+    allLocations,
+    onSelectDestination,
+    selectedDestination,
+    onClearDestination,
+    stops,
+    selectedStopIds,
+    onToggleStop,
+    userLocation,
+    requestLocation,
+    isLocating,
+    onUpdateStops
+}: TripSidebarProps) {
     const [search, setSearch] = useState("");
-    const [selectedDest, setSelectedDest] = useState<any | null>(null);
     const [suggestionModalOpen, setSuggestionModalOpen] = useState(false);
     const [targetStopForSwap, setTargetStopForSwap] = useState<CrowdLocationData | null>(null);
     const [alternatives, setAlternatives] = useState<CrowdLocationData[]>([]);
     const [nearbyBusinesses, setNearbyBusinesses] = useState<LocalBusiness[]>([]);
-    const [showStops, setShowStops] = useState(false);
+    const [showLocalStops, setShowLocalStops] = useState(false);
 
-    const filteredLocations = allLocations.filter(loc =>
-        loc.name.toLowerCase().includes(search.toLowerCase())
-    ).slice(0, 5);
+    const filteredLocations = search.trim() === ""
+        ? allLocations.slice(0, 5)
+        : allLocations.filter(loc =>
+            loc.name.toLowerCase().includes(search.toLowerCase())
+        ).slice(0, 10);
 
     // Fetch local businesses when destination is selected
     useEffect(() => {
-        if (selectedDest) {
-            const businesses = getNearbyBusinesses({ coords: selectedDest.coords });
+        if (selectedDestination) {
+            const businesses = getNearbyBusinesses({ coords: selectedDestination.coords });
             setNearbyBusinesses(businesses);
         } else {
             setNearbyBusinesses([]);
+            setShowLocalStops(false);
         }
-    }, [selectedDest]);
+    }, [selectedDestination]);
 
     const handleSelect = (loc: any) => {
-        setSelectedDest(loc);
         onSelectDestination(loc);
-        setSearch(""); // clear search to show selection state
-    };
-
-    const handleFindAlternative = (stop: CrowdLocationData) => {
-        const alts = getAlternatives(stop, allLocations);
-        setAlternatives(alts);
-        setTargetStopForSwap(stop);
-        setSuggestionModalOpen(true);
+        setSearch("");
     };
 
     const handleSwapStop = (newStop: CrowdLocationData) => {
@@ -83,12 +91,12 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
     };
 
     const handleAddStop = (newStop: CrowdLocationData) => {
-        if (!onUpdateStops || !userLocation || !selectedDest) return;
+        if (!onUpdateStops || !userLocation || !selectedDestination) return;
 
         // Calculate required metrics for the trip planner
         const stopCoords = parseCoords(newStop.coords);
         const startCoords = userLocation;
-        const destCoords = parseCoords(selectedDest.coords);
+        const destCoords = parseCoords(selectedDestination.coords);
 
         if (stopCoords && startCoords && destCoords) {
             newStop = {
@@ -97,7 +105,6 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
                 distanceFromStart: getDistance(startCoords, stopCoords)
             };
         } else {
-            // Fallback if coords parsing fails
             newStop = {
                 ...newStop,
                 distanceFromRoute: 0,
@@ -109,7 +116,6 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
         let newStops = [...stops];
         if (!newStops.find(s => s.id === newStop.id)) {
             newStops.push(newStop);
-            // Re-sort by distance might be needed, but simplified here
         }
 
         const newSelected = new Set(selectedStopIds);
@@ -121,296 +127,303 @@ export function TripSidebar({ allLocations, onSelectDestination, stops, selected
     };
 
     return (
-        <div className="h-full flex flex-col bg-background/95 backdrop-blur shadow-xl border-r z-10 w-full md:w-[400px]">
+        <div className="h-full flex flex-col bg-white/80 dark:bg-black/60 backdrop-blur-xl shadow-2xl border-r border-gray-200/50 dark:border-white/10 z-10 w-full md:w-[420px] transition-all duration-300">
             {/* Header / Input */}
-            <div className="p-4 border-b space-y-4">
-                <div className="flex items-center gap-2 text-primary font-bold text-xl">
-                    <Navigation className="w-6 h-6" />
-                    Trip Planner
+            <div className="p-6 border-b border-gray-200/50 dark:border-white/10 space-y-6 shrink-0 relative overflow-hidden">
+                {/* Subtle gradient accent */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+
+                <div className="flex items-center gap-3 relative">
+                    <div className="p-2 bg-primary/10 rounded-xl text-primary">
+                        <Route className="w-6 h-6" />
+                    </div>
+                    <h1 className="font-bold text-2xl tracking-tight text-foreground/90">Planner</h1>
                 </div>
 
-                <div className="space-y-3">
-                    {/* User Location */}
-                    <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md border text-sm">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                        {userLocation ? (
-                            <span className="text-muted-foreground">ตำแหน่งของคุณ (Your Location)</span>
+                <div className="space-y-4 relative">
+                    {/* User Location Box */}
+                    <div className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-300 ${userLocation ? 'bg-primary/5 text-primary border-primary/20 shadow-sm' : 'bg-muted/50 border-transparent hover:bg-muted'}`}>
+                        {isLocating ? (
+                            <Loader2 className="w-5 h-5 animate-spin text-primary shrink-0" />
+                        ) : userLocation ? (
+                            <div className="relative flex h-3 w-3 shrink-0 ml-1">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                            </div>
                         ) : (
-                            <Button size="sm" variant="link" onClick={requestLocation} className="h-auto p-0 text-primary">
-                                กดเพื่อระบุตำแหน่ง (Click to locate)
-                            </Button>
+                            <MapPin className="w-5 h-5 text-muted-foreground shrink-0" />
                         )}
+
+                        <div className="flex-1 min-w-0">
+                            {userLocation ? (
+                                <p className="text-sm font-medium truncate">ตำแหน่งของคุณ (Current Location)</p>
+                            ) : (
+                                <button
+                                    onClick={requestLocation}
+                                    disabled={isLocating}
+                                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left w-full truncate"
+                                >
+                                    {isLocating ? "กำลังระบุตำแหน่ง... (Locating...)" : "กดเพื่อนระบุตำแหน่ง (Set starting point)"}
+                                </button>
+                            )}
+                        </div>
                     </div>
 
-                    {/* Destination Input */}
-                    <div className="relative">
-                        <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
-                        <Input
-                            placeholder="ค้นหาปลายทาง... (Where to?)"
-                            value={selectedDest ? selectedDest.name : search}
-                            onChange={(e) => {
-                                setSearch(e.target.value);
-                                if (selectedDest) setSelectedDest(null); // Clear selection if typing
-                            }}
-                            className="pl-9"
-                        />
+                    {/* Connecting Line (visibile only if destination is set) */}
+                    {selectedDestination && (
+                        <div className="absolute left-6 top-14 bottom-4 w-px bg-gradient-to-b from-primary/30 to-border hidden" />
+                    )}
+
+                    {/* Destination Input Box */}
+                    <div className="relative group">
+                        <div className="absolute left-3.5 top-3.5 w-2 h-2 rounded-full border-2 border-foreground bg-background z-10" />
+
+                        {selectedDestination ? (
+                            <div className="flex items-center justify-between p-3 pl-10 bg-card rounded-xl border shadow-sm ring-1 ring-border/50">
+                                <div className="min-w-0">
+                                    <p className="text-sm font-semibold truncate">{selectedDestination.name}</p>
+                                    <p className="text-xs text-muted-foreground truncate">ปลายทาง (Destination)</p>
+                                </div>
+                                <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full shrink-0 hover:bg-destructive/10 hover:text-destructive" onClick={onClearDestination}>
+                                    <X className="w-4 h-4" />
+                                </Button>
+                            </div>
+                        ) : (
+                            <Input
+                                placeholder="ค้นหาปลายทาง... (Search destination)"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="pl-10 py-6 bg-muted/50 border-transparent focus-visible:ring-primary/50 focus-visible:bg-background transition-all rounded-xl shadow-inner text-base"
+                            />
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Results / Route Info */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
-                <div className="p-4 space-y-4">
-                    {/* Search / Suggestions */}
-                    {!selectedDest && (
-                        <div className="space-y-2">
-                            <h3 className="text-sm font-medium text-muted-foreground">
-                                {search.length > 0 ? "ผลการค้นหา (Results)" : "สถานที่แนะนำ (Suggested)"}
+            {/* Scrollable Content Area */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar bg-gradient-to-b from-transparent to-black/[0.02] dark:to-white/[0.01]">
+                {/* Search Results (When no destination is selected) */}
+                {!selectedDestination && (
+                    <div className="p-4 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="space-y-3">
+                            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider pl-2">
+                                {search.length > 0 ? "ผลการค้นหา (Results)" : "สถานที่แนะนำ (Trending)"}
                             </h3>
-                            {(search.length > 0 ? filteredLocations : allLocations.slice(0, 10)).map(loc => (
-                                <button
-                                    key={loc.id}
-                                    onClick={() => handleSelect(loc)}
-                                    className="w-full text-left p-3 rounded-lg hover:bg-accent flex items-center gap-3 transition-colors group"
-                                >
-                                    <div className="w-10 h-10 rounded bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-background transition-colors">
-                                        {loc.image ? (
-                                            <img src={loc.image} alt={loc.name} className="w-full h-full object-cover rounded" />
-                                        ) : <MapPin className="w-5 h-5" />}
-                                    </div>
-                                    <div className="min-w-0">
-                                        <div className="font-medium truncate">{loc.name}</div>
-                                        <div className="text-xs text-muted-foreground truncate">{loc.description}</div>
-                                    </div>
-                                </button>
-                            ))}
+                            <div className="space-y-2">
+                                {filteredLocations.map(loc => (
+                                    <button
+                                        key={loc.id}
+                                        onClick={() => handleSelect(loc)}
+                                        className="w-full text-left p-3 rounded-2xl hover:bg-card hover:shadow-md border border-transparent hover:border-border transition-all duration-200 group flex gap-4 items-center focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    >
+                                        <div className="w-14 h-14 rounded-xl bg-muted overflow-hidden flex-shrink-0 relative shadow-sm">
+                                            {loc.image ? (
+                                                <img src={loc.image} alt={loc.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                            ) : (
+                                                <MapPin className="w-6 h-6 m-auto text-muted-foreground/50 h-full" />
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-semibold text-foreground truncate">{loc.name}</p>
+                                            <p className="text-xs text-muted-foreground truncate mt-0.5">{loc.description}</p>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    )}
+                    </div>
+                )}
 
-                    {/* Stops Along Route */}
-                    {selectedDest && userLocation && (
-                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-5">
-                            <div
-                                className="flex items-center justify-between cursor-pointer hover:bg-muted/50 p-2 -mx-2 rounded-lg transition-colors"
-                                onClick={() => setShowStops(!showStops)}
-                            >
-                                <div>
-                                    <h3 className="font-semibold text-lg flex items-center gap-2">
-                                        🚩 แวะเที่ยวระหว่างทาง
-                                        {showStops ? (
-                                            <span className="text-xs font-normal text-muted-foreground">(ซ่อน)</span>
-                                        ) : (
-                                            <span className="text-xs font-normal text-muted-foreground">(แสดง)</span>
-                                        )}
-                                    </h3>
-                                    <p className="text-xs text-muted-foreground">
-                                        ระยะทางรวม +{stops.filter(s => selectedStopIds.has(s.id)).reduce((acc, curr) => acc + (curr.distanceFromRoute || 0), 0).toFixed(1)} กม. จากเส้นทางปกติ
-                                    </p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">
-                                        {selectedStopIds.size} / {stops.length}
-                                    </div>
+                {/* Itinerary View (When destination is selected) */}
+                {selectedDestination && (
+                    <div className="p-4 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+                        {/* Requirement Warning */}
+                        {!userLocation && (
+                            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 flex gap-3 text-amber-800 dark:text-amber-200">
+                                <MapPin className="w-5 h-5 shrink-0 mt-0.5" />
+                                <div className="text-sm">
+                                    <p className="font-semibold">โปรดระบุตำแหน่งของคุณ</p>
+                                    <p className="opacity-90 mt-1">ระบบต้องการทราบจุดเริ่มต้นเพื่อคำนวณเส้นทางและแนะนำสถานที่แวะพัก (We need your location to calculate routes).</p>
                                 </div>
                             </div>
+                        )}
 
-                            {showStops && (
-                                <div className="animate-in slide-in-from-top-2 fade-in duration-200">
-                                    {stops.length === 0 ? (
-                                        <div className="text-center py-8 text-muted-foreground">
-                                            ไม่พบสถานที่ท่องเที่ยวในเส้นทางนี้
-                                            <br /><span className="text-xs opacity-70">Try a longer route!</span>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-3">
-                                            {stops.map((stop, idx) => {
-                                                const isSelected = selectedStopIds.has(stop.id);
-                                                return (
-                                                    <div key={stop.id} className="relative group transition-all duration-200">
-                                                        <div
-                                                            className={`
-                                                        relative overflow-hidden rounded-xl border transition-all duration-200 cursor-pointer
-                                                        ${isSelected
-                                                                    ? 'bg-card border-green-500 shadow-md ring-1 ring-green-500/20'
-                                                                    : 'bg-muted/30 border-transparent hover:bg-muted hover:border-border'
-                                                                }
-                                                    `}
-                                                            onClick={() => onToggleStop(stop.id)}
-                                                        >
-                                                            <div className="flex p-3 gap-3">
-                                                                {/* Image */}
-                                                                <div className="w-20 h-20 rounded-lg bg-muted overflow-hidden flex-shrink-0 relative">
-                                                                    {stop.image ? (
-                                                                        <img src={stop.image} alt={stop.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                                                                    ) : (
-                                                                        <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
-                                                                            <MapPin size={24} />
-                                                                        </div>
-                                                                    )}
-                                                                    {isSelected && (
-                                                                        <div className="absolute top-1 right-1 bg-green-500 text-white p-0.5 rounded-full shadow-sm">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
+                        {/* Stops Along Route */}
+                        {userLocation && stops.length > 0 && (
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between px-1">
+                                    <h3 className="font-bold text-lg flex items-center gap-2">
+                                        แวะเที่ยวระหว่างทาง
+                                    </h3>
+                                    <div className="bg-primary/10 text-primary-foreground font-semibold text-xs px-2.5 py-1 rounded-full text-primary">
+                                        {selectedStopIds.size} stops
+                                    </div>
+                                </div>
 
-                                                                {/* Content */}
-                                                                <div className="flex-1 min-w-0 flex flex-col justify-between">
-                                                                    <div>
-                                                                        <div className="flex justify-between items-start gap-2">
-                                                                            <h4 className={`font-semibold text-sm leading-tight ${isSelected ? 'text-green-700' : 'text-foreground'}`}>
-                                                                                {stop.name}
-                                                                            </h4>
-                                                                            <span className="text-[10px] font-mono text-muted-foreground whitespace-nowrap bg-background/50 px-1.5 py-0.5 rounded">
-                                                                                +{stop.distanceFromStart?.toFixed(0) || '?'}km
-                                                                            </span>
-                                                                        </div>
-                                                                        <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-                                                                            {stop.description}
-                                                                        </p>
-                                                                    </div>
-
-                                                                    <div className="flex items-center justify-between mt-2">
-                                                                        <div className="text-xs font-medium text-orange-500 flex items-center gap-1">
-                                                                            <ArrowRight className="w-3 h-3" />
-                                                                            ออกนอกเส้นทาง {stop.distanceFromRoute?.toFixed(1) || '?'} กม.
-                                                                        </div>
-                                                                    </div>
+                                <div className="space-y-3 relative before:absolute before:inset-y-0 before:left-6 before:w-px before:bg-border before:-z-10 before:my-4">
+                                    {stops.map(stop => {
+                                        const isSelected = selectedStopIds.has(stop.id);
+                                        return (
+                                            <div
+                                                key={stop.id}
+                                                className={`
+                                                    relative rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden
+                                                    ${isSelected ? 'bg-card border-primary shadow-lg ring-1 ring-primary/20 scale-[1.02]' : 'bg-background/50 hover:bg-muted border-border/50 hover:border-border'}
+                                                `}
+                                                onClick={() => onToggleStop(stop.id)}
+                                            >
+                                                <div className="flex p-3 gap-4 h-28">
+                                                    <div className="w-20 h-full rounded-xl flex-shrink-0 relative overflow-hidden bg-muted">
+                                                        {stop.image ? (
+                                                            <img src={stop.image} alt={stop.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <MapPin className="w-8 h-8 m-auto text-muted-foreground/30 h-full" />
+                                                        )}
+                                                        {isSelected && (
+                                                            <div className="absolute inset-0 bg-primary/20 flex items-center justify-center backdrop-blur-[1px]">
+                                                                <div className="bg-primary text-white rounded-full p-1 shadow-md">
+                                                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                                                 </div>
                                                             </div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                                        <h4 className={`font-semibold line-clamp-1 mb-1 ${isSelected ? 'text-primary' : 'text-foreground'}`}>
+                                                            {stop.name}
+                                                        </h4>
+                                                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                                                            {stop.description}
+                                                        </p>
+                                                        <div className="mt-auto pt-2 flex items-center gap-3 text-[10px] font-medium text-muted-foreground uppercase">
+                                                            <span className="flex items-center gap-1 bg-muted px-2 py-0.5 rounded-sm">
+                                                                <Navigation className="w-3 h-3" />
+                                                                +{stop.distanceFromRoute?.toFixed(1) || '?'} กม.
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                )
-                                            })}
-                                        </div>
-                                    )}
-
-
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
                                 </div>
-                            )}
+                            </div>
+                        )}
 
-                            {/* Support Local Section */}
-                            {selectedDest && nearbyBusinesses.length > 0 && (
-                                <div className="space-y-3 pt-4 border-t animate-in fade-in slide-in-from-bottom-5">
+                        {/* Support Local Section */}
+                        {nearbyBusinesses.length > 0 && (
+                            <div className="space-y-4 pt-6 border-t border-border/50 relative">
+                                <div className="flex items-center justify-between px-1 cursor-pointer" onClick={() => setShowLocalStops(!showLocalStops)}>
                                     <div className="flex items-center gap-2">
-                                        <h3 className="font-semibold text-lg flex items-center gap-2">
-                                            🛍️ อุดหนุนร้านท้องถิ่น
+                                        <h3 className="font-bold text-lg flex items-center gap-2">
+                                            อุดหนุนร้านท้องถิ่น
                                         </h3>
-                                        <span className="bg-orange-100 text-orange-700 text-[10px] font-bold px-1.5 py-0.5 rounded">
+                                        <span className="bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
                                             Support Local
                                         </span>
                                     </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        ร้านค้าแนะนำใกล้ {selectedDest.name}
-                                    </p>
+                                    <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold px-2">
+                                        {showLocalStops ? 'Hide' : 'Show All'}
+                                    </Button>
+                                </div>
 
-                                    <div className="grid gap-3">
-                                        {nearbyBusinesses.map(biz => (
-                                            <div key={biz.id} className="flex gap-3 p-3 bg-orange-50/50 border border-orange-100 rounded-lg hover:bg-orange-50 transition-colors">
-                                                <div className="w-16 h-16 rounded-md bg-muted overflow-hidden flex-shrink-0">
-                                                    {biz.image ? (
-                                                        <img src={biz.image} alt={biz.name} className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center bg-orange-100 text-orange-300">
-                                                            <MapPin size={24} />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <h4 className="font-medium text-sm line-clamp-1">{biz.name}</h4>
-                                                    <p className="text-xs text-muted-foreground line-clamp-1">{biz.description}</p>
-                                                    {biz.recommendedItem && (
-                                                        <span className="text-[10px] text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded-full inline-block mt-1">
-                                                            ⭐ {biz.recommendedItem}
-                                                        </span>
-                                                    )}
-                                                </div>
+                                <div className="grid gap-3">
+                                    {(showLocalStops ? nearbyBusinesses : nearbyBusinesses.slice(0, 2)).map(biz => (
+                                        <div key={biz.id} className="flex gap-4 p-3 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/50 rounded-2xl hover:shadow-md transition-all group">
+                                            <div className="w-16 h-16 rounded-xl bg-muted overflow-hidden flex-shrink-0 relative shadow-sm">
+                                                {biz.image ? (
+                                                    <img src={biz.image} alt={biz.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                                                ) : (
+                                                    <Star className="w-6 h-6 m-auto text-amber-300 h-full" />
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                                <h4 className="font-semibold text-sm line-clamp-1">{biz.name}</h4>
+                                                <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{biz.description}</p>
+                                                {biz.recommendedItem && (
+                                                    <span className="text-[10px] text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full inline-flex w-fit mt-1.5 font-medium">
+                                                        ⭐ {biz.recommendedItem}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center mr-1">
                                                 <Button
-                                                    size="sm"
-                                                    variant="ghost"
-                                                    className="h-8 w-8 p-0 shrink-0 text-orange-600 hover:text-orange-700 hover:bg-orange-100"
+                                                    size="icon"
+                                                    variant="secondary"
+                                                    className="w-8 h-8 rounded-full bg-white dark:bg-black shadow-sm text-amber-600 hover:bg-amber-600 hover:text-white transition-colors"
                                                     onClick={() => handleAddStop(convertBusinessToLocation(biz))}
                                                 >
-                                                    <Plus className="w-5 h-5" />
+                                                    <Plus className="w-4 h-4" />
                                                 </Button>
                                             </div>
-                                        ))}
-                                    </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            )}
+                            </div>
+                        )}
+
+                        {/* Start Navigation Action */}
+                        <div className="pt-6 pb-2">
                             <Button
-                                className="w-full mt-4"
-                                size="lg"
+                                className="w-full h-14 rounded-2xl text-base font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95"
+                                disabled={!userLocation || !selectedDestination}
                                 onClick={() => {
-                                    if (!userLocation || !selectedDest) return;
-
+                                    if (!userLocation || !selectedDestination) return;
                                     const origin = `${userLocation.lat},${userLocation.lng}`;
-                                    const dest = selectedDest.coords;
-
-                                    // Filter only selected stops
+                                    const dest = selectedDestination.coords;
                                     const waypoints = stops
                                         .filter(s => selectedStopIds.has(s.id))
-                                        .slice(0, 8) // Google Maps limit
+                                        .slice(0, 8)
                                         .map(s => s.coords.replace(/\s/g, ''))
                                         .join('|');
 
                                     let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`;
-                                    if (waypoints) {
-                                        url += `&waypoints=${waypoints}`;
-                                    }
-
+                                    if (waypoints) url += `&waypoints=${waypoints}`;
                                     window.open(url, '_blank');
                                 }}
                             >
-                                <Navigation className="w-4 h-4 mr-2" />
-                                เริ่มนำทาง ({selectedStopIds.size} stops)
+                                <Navigation className="w-5 h-5 mr-2" />
+                                เริ่มนำทางไปยังปลายทาง ({selectedStopIds.size} stops)
                             </Button>
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
 
             {/* Alternatives Dialog */}
             <Dialog open={suggestionModalOpen} onOpenChange={setSuggestionModalOpen}>
-                <DialogContent>
+                <DialogContent className="rounded-2xl border-none shadow-2xl">
                     <DialogHeader>
-                        <DialogTitle>แนะนำสถานที่ทางเลือก (Suggested Alternatives)</DialogTitle>
-                        <DialogDescription>
-                            สถานที่ "{targetStopForSwap?.name}" คนหนาแน่นมาก ลองไปที่เหล่านี้แทนไหม?
+                        <DialogTitle className="text-xl">แนะนำสถานที่ทางเลือก</DialogTitle>
+                        <DialogDescription className="text-base text-muted-foreground pt-2">
+                            สถานที่ <span className="font-semibold text-foreground">"{targetStopForSwap?.name}"</span> คนหนาแน่นมาก ลองไปที่เหล่านี้แทนไหม?
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="space-y-3 mt-2">
+                    <div className="space-y-3 mt-4">
                         {alternatives.length > 0 ? alternatives.map(alt => (
-                            <Card key={alt.id} className="overflow-hidden hover:bg-muted/50 transition-colors">
-                                <CardContent className="p-3 flex items-center gap-3">
-                                    <div className="w-16 h-16 rounded-md bg-muted overflow-hidden flex-shrink-0 relative">
-                                        {alt.image ? (
-                                            <img src={alt.image} alt={alt.name} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <MapPin className="w-6 h-6 m-auto text-muted-foreground" />
-                                        )}
+                            <div key={alt.id} className="flex gap-4 p-3 rounded-2xl border hover:bg-muted/50 transition-colors">
+                                <div className="w-20 h-20 rounded-xl bg-muted overflow-hidden flex-shrink-0">
+                                    {alt.image ? <img src={alt.image} alt={alt.name} className="w-full h-full object-cover" /> : <MapPin className="w-8 h-8 m-auto text-muted-foreground/30 h-full" />}
+                                </div>
+                                <div className="flex-1 flex flex-col justify-center">
+                                    <h4 className="font-semibold">{alt.name}</h4>
+                                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mt-1 bg-green-500/10 text-green-700 w-fit px-2 py-0.5 rounded-sm">
+                                        คนน้อยกว่า • ห่างออกไป {alt.distance.toFixed(1)} กม.
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className="font-medium text-sm">{alt.name}</h4>
-                                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                                            <span className="text-green-600 font-medium">คนน้อยกว่า</span>
-                                            <span>•</span>
-                                            <span>ห่างออกไป {alt.distance.toFixed(1)} กม.</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                        <Button size="sm" variant="secondary" className="h-7 text-xs" onClick={() => handleSwapStop(alt)}>
-                                            <ArrowLeftRight className="w-3 h-3 mr-1" /> เปลี่ยน
+                                    <div className="flex gap-2 mt-3">
+                                        <Button size="sm" variant="default" className="h-8 rounded-lg flex-1" onClick={() => handleSwapStop(alt)}>
+                                            <ArrowLeftRight className="w-3 h-3 mr-1.5" /> เปลี่ยน
                                         </Button>
-                                        <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => handleAddStop(alt)}>
-                                            <Plus className="w-3 h-3 mr-1" /> เพิ่ม
+                                        <Button size="sm" variant="outline" className="h-8 rounded-lg px-3" onClick={() => handleAddStop(alt)}>
+                                            <Plus className="w-4 h-4" />
                                         </Button>
                                     </div>
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </div>
                         )) : (
-                            <div className="text-center py-4 text-muted-foreground">
+                            <div className="text-center py-8 text-muted-foreground bg-muted/30 rounded-2xl">
                                 ไม่พบสถานที่ทางเลือกในบริเวณใกล้เคียง
                             </div>
                         )}
