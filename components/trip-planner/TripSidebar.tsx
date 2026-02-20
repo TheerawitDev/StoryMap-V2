@@ -275,10 +275,14 @@ export function TripSidebar({
                                             >
                                                 <div className="flex p-3 gap-4 h-28">
                                                     <div className="w-20 h-full rounded-xl flex-shrink-0 relative overflow-hidden bg-muted">
-                                                        {stop.image ? (
+                                                        {stop.image && typeof stop.image === 'string' && stop.image.length > 0 && !stop.image.includes('/images/shops/') ? (
                                                             <img src={stop.image} alt={stop.name} className="w-full h-full object-cover" />
                                                         ) : (
-                                                            <MapPin className="w-8 h-8 m-auto text-muted-foreground/30 h-full" />
+                                                            typeof stop.id === 'string' && stop.id.startsWith('lb-') ? (
+                                                                <Star className="w-8 h-8 m-auto text-amber-400 h-full" />
+                                                            ) : (
+                                                                <MapPin className="w-8 h-8 m-auto text-muted-foreground/30 h-full" />
+                                                            )
                                                         )}
                                                         {isSelected && (
                                                             <div className="absolute inset-0 bg-primary/20 flex items-center justify-center backdrop-blur-[1px]">
@@ -331,11 +335,11 @@ export function TripSidebar({
                                 <div className="grid gap-3">
                                     {(showLocalStops ? nearbyBusinesses : nearbyBusinesses.slice(0, 2)).map(biz => (
                                         <div key={biz.id} className="flex gap-4 p-3 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/50 rounded-2xl hover:shadow-md transition-all group">
-                                            <div className="w-16 h-16 rounded-xl bg-muted overflow-hidden flex-shrink-0 relative shadow-sm">
-                                                {biz.image ? (
+                                            <div className="w-16 h-16 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 overflow-hidden flex-shrink-0 relative shadow-sm ring-1 ring-amber-500/20">
+                                                {biz.image && typeof biz.image === 'string' && biz.image.length > 0 && !biz.image.includes('undefined') && !biz.image.includes('/images/shops/') ? (
                                                     <img src={biz.image} alt={biz.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                                                 ) : (
-                                                    <Star className="w-6 h-6 m-auto text-amber-300 h-full" />
+                                                    <Star className="w-6 h-6 m-auto text-amber-400 drop-shadow-sm h-full animate-in zoom-in duration-500 delay-100" />
                                                 )}
                                             </div>
                                             <div className="flex-1 min-w-0 flex flex-col justify-center">
