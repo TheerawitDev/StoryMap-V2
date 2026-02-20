@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PlacesPage() {
-    const { locations, series, fetchData } = useStore();
+    const { locations, series, fetchData, isLoading } = useStore();
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
@@ -48,7 +49,19 @@ export default function PlacesPage() {
                     </div>
                 </div>
 
-                {filteredLocations.length > 0 ? (
+                {isLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {[...Array(8)].map((_, i) => (
+                            <div key={i} className="flex flex-col space-y-3">
+                                <Skeleton className="h-[300px] w-full rounded-xl" />
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-[80%]" />
+                                    <Skeleton className="h-4 w-[60%]" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : filteredLocations.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredLocations.map((loc) => (
                             <LocationCard

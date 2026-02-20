@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 
 export default function ExplorePage() {
-    const { series, fetchData } = useStore();
+    const { series, fetchData, isLoading } = useStore();
 
     useEffect(() => {
         if (series.length === 0) {
@@ -44,7 +45,18 @@ export default function ExplorePage() {
                     </div>
                 </div>
 
-                {filteredSeries.length > 0 ? (
+                {isLoading ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                        {[...Array(12)].map((_, i) => (
+                            <div key={i} className="flex flex-col space-y-3">
+                                <Skeleton className="h-[250px] w-full rounded-xl" />
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-[150px]" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : filteredSeries.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                         {filteredSeries.map((s) => (
                             <SeriesCard key={s.id} series={s} />
