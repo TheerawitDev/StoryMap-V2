@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { NavbarUserActions } from "./NavbarUserActions";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/components/ui/sheet";
 import { MobileNav } from "./MobileNav";
+import { NavLink } from "./NavLink";
 
 export async function Navbar() {
     const session = await auth();
@@ -22,24 +23,24 @@ export async function Navbar() {
 
                 {/* Desktop Navigation Links */}
                 <div className="hidden md:flex items-center gap-8">
-                    <Link href="/" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                    <NavLink href="/">
                         หน้าหลัก (Home)
-                    </Link>
-                    <Link href="/explore" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                    </NavLink>
+                    <NavLink href="/explore">
                         สำรวจ (Explore)
-                    </Link>
-                    <Link href="/places" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                    </NavLink>
+                    <NavLink href="/places">
                         สถานที่ (Places)
-                    </Link>
-                    <Link href="/crowd-monitor" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                    </NavLink>
+                    <NavLink href="/crowd-monitor">
                         ติดตามคน (Crowd Monitor)
-                    </Link>
-                    <Link href="/trip-planner" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                    </NavLink>
+                    <NavLink href="/trip-planner">
                         วางแผนเที่ยว (Trip Planner)
-                    </Link>
-                    <Link href="/profile" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                    </NavLink>
+                    <NavLink href="/profile">
                         โปรไฟล์ (Profile)
-                    </Link>
+                    </NavLink>
                 </div>
 
                 {/* Actions */}

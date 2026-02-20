@@ -22,7 +22,7 @@ export function HighlightsSection({ locations }: HighlightsSectionProps) {
                     {mainHighlight ? (
                         <Link href={`/place/${mainHighlight.id}`} className="md:col-span-2 md:row-span-2 relative rounded-3xl overflow-hidden group cursor-pointer h-[300px] md:h-full block shadow-lg">
                             <Image
-                                src={mainHighlight.image || "/images/placeholder.jpg"}
+                                src={mainHighlight.image || "/images/bangkok-city.jpg"}
                                 alt={mainHighlight.name}
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -45,7 +45,7 @@ export function HighlightsSection({ locations }: HighlightsSectionProps) {
                     {secondaryHighlight1 ? (
                         <Link href={`/place/${secondaryHighlight1.id}`} className="md:col-span-2 relative rounded-3xl overflow-hidden cursor-pointer group block h-[250px] md:h-full shadow-lg">
                             <Image
-                                src={secondaryHighlight1.image || "/images/placeholder.jpg"}
+                                src={secondaryHighlight1.image || "/images/bangkok-city.jpg"}
                                 alt={secondaryHighlight1.name}
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -67,7 +67,7 @@ export function HighlightsSection({ locations }: HighlightsSectionProps) {
                     {secondaryHighlight2 ? (
                         <Link href={`/place/${secondaryHighlight2.id}`} className="md:col-span-1 relative rounded-3xl overflow-hidden cursor-pointer group block h-[200px] md:h-full shadow-lg">
                             <Image
-                                src={secondaryHighlight2.image || "/images/placeholder.jpg"}
+                                src={secondaryHighlight2.image || "/images/bangkok-city.jpg"}
                                 alt={secondaryHighlight2.name}
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"

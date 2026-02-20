@@ -41,14 +41,14 @@ export function HeroSection({ stats }: { stats: HeroStats }) {
                         </span>
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-bold text-gray-900 tracking-tight leading-[1.1] animate-fade-in-up delay-100">
+                    <h1 className="text-5xl md:text-7xl font-bold text-gray-900 tracking-tight leading-[1.1] animate-fade-in-up delay-100 drop-shadow-sm">
                         เปลี่ยนฉากประทับใจ<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-primary">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-primary drop-shadow-sm">
                             ให้กลายเป็นการเดินทาง
                         </span>
                     </h1>
 
-                    <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-200">
+                    <p className="text-xl md:text-2xl text-gray-800 font-medium max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-200 drop-shadow-sm">
                         ค้นพบสถานที่ถ่ายทำจากซีรีส์เรื่องโปรด ปักหมุดพิกัด แล้วออกเดินทางไปสัมผัสบรรยากาศจริงที่ไม่ได้มีแค่ในจอ
                     </p>
 
