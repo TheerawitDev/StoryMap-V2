@@ -61,7 +61,19 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
                     liveLocations.filter(l => l.id !== destination.id), // Exclude dest
                     20 // 20km threshold for demo
                 );
-                setStops(foundStops);
+                setStops(prevStops => {
+                    // Preserve any local businesses (IDs starting with 'lb-')
+                    const localStops = prevStops.filter(s => typeof s.id === 'string' && s.id.startsWith('lb-'));
+
+                    const mergedStops = [...foundStops];
+                    localStops.forEach(ls => {
+                        if (!mergedStops.some(s => s.id === ls.id)) {
+                            mergedStops.push(ls);
+                        }
+                    });
+
+                    return mergedStops;
+                });
 
                 // Only reset selected stops if the destination fundamentally changed
                 if (destination.id !== lastDestId) {
@@ -69,11 +81,14 @@ export default function TripPlannerPage({ initialLocations }: TripPlannerPagePro
                     setLastDestId(destination.id);
                 } else {
                     // Clean up any stale selected stops just in case, but keep user choices
+                    // AND keep local business choices!
                     setSelectedStopIds(prev => {
                         const validIds = new Set(foundStops.map(s => s.id));
                         const next = new Set<string | number>();
                         prev.forEach(id => {
-                            if (validIds.has(id)) next.add(id);
+                            if (validIds.has(id) || (typeof id === 'string' && id.startsWith('lb-'))) {
+                                next.add(id);
+                            }
                         });
                         return next;
                     });
