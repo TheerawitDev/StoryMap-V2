@@ -19,7 +19,7 @@ export const MOCK_LOCAL_BUSINESSES: LocalBusiness[] = [
         name: "ก.พานิช (K. Panich)",
         type: 'food',
         coords: "13.7523, 100.4996",
-        image: "https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&q=80&w=300",
+        image: "/images/shops/lb-k-panich.jpg",
         description: "ร้านข้าวเหนียวมูนระดับตำนาน เปิดขายมาตั้งแต่ปี 2475 การันตีด้วย Michelin Bib Gourmand",
         recommendedItem: "ข้าวเหนียวมูนมะม่วง (Mango Sticky Rice)"
     },
@@ -28,7 +28,7 @@ export const MOCK_LOCAL_BUSINESSES: LocalBusiness[] = [
         name: "ทิพย์สมัย ผัดไทยประตูผี",
         type: 'food',
         coords: "13.7528, 100.5048",
-        image: "https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&q=80&w=300",
+        image: "/images/shops/lb-pad-thai-thip-samai.jpg",
         description: "ร้านผัดไทยที่โด่งดังที่สุดในกรุงเทพฯ ขึ้นชื่อเรื่องผัดไทยห่อไข่และน้ำส้มคั้นสด",
         recommendedItem: "ผัดไทยห่อไข่ (Superb Pad Thai)"
     },
@@ -37,7 +37,7 @@ export const MOCK_LOCAL_BUSINESSES: LocalBusiness[] = [
         name: "ตลาดพระท่าพระจันทร์",
         type: 'gift',
         coords: "13.7548, 100.4893",
-        image: "https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&q=80&w=300",
+        image: "/images/shops/lb-amulet-market.jpg",
         description: "ตลาดพระเครื่องและวัตถุมงคลที่เก่าแก่และมีชื่อเสียงที่สุดในกรุงเทพฯ",
         recommendedItem: "พระเครื่องและวัตถุมงคล"
     },
@@ -48,7 +48,7 @@ export const MOCK_LOCAL_BUSINESSES: LocalBusiness[] = [
         name: "ตลาดท่าเตียน",
         type: 'other',
         coords: "13.7463, 100.4905",
-        image: "https://images.unsplash.com/photo-1580974852861-c048383049b8?auto=format&fit=crop&q=80&w=300",
+        image: "/images/shops/lb-tha-tian-market.jpg",
         description: "ตลาดเก่าแก่ริมแม่น้ำเจ้าพระยา แหล่งรวมอาหารทะเลแห้งย่านที่คึกคักไปด้วยคาเฟ่",
         recommendedItem: "อาหารทะเลแห้ง (Dried Seafood)"
     },
@@ -57,7 +57,7 @@ export const MOCK_LOCAL_BUSINESSES: LocalBusiness[] = [
         name: "ตลาดวังหลัง",
         type: 'food',
         coords: "13.7554, 100.4856",
-        image: "https://images.unsplash.com/photo-1582260654060-631165239a5c?auto=format&fit=crop&q=80&w=300", // Street food
+        image: "/images/shops/lb-wang-lang.jpg", // Street food
         description: "สวรรค์ของนักกินและนักช้อป แหล่งรวมสตรีทฟู้ดอร่อยและสินค้าราคาประหยัดฝั่งธนฯ",
         recommendedItem: "หมูทอดวังหลัง & อรทัยซูชิ"
     },
@@ -68,7 +68,7 @@ export const MOCK_LOCAL_BUSINESSES: LocalBusiness[] = [
         name: "T&K Seafood (เสื้อเขียว)",
         type: 'food',
         coords: "13.7408, 100.5097",
-        image: "https://images.unsplash.com/photo-1596627581515-77981d30a84d?auto=format&fit=crop&q=80&w=300", // Seafood
+        image: "/images/shops/lb-tk-seafood.jpg", // Seafood
         description: "ร้านอาหารทะเลเยาวราชในตำนาน บรรยากาศสตรีทฟู้ดแท้ๆ รสชาติจัดจ้าน",
         recommendedItem: "กุ้งแม่น้ำเผา (Grilled Prawns)"
     },
@@ -77,7 +77,7 @@ export const MOCK_LOCAL_BUSINESSES: LocalBusiness[] = [
         name: "ก๋วยจั๊บอ้วนโภชนา (หน้าโรงหนัง)",
         type: 'food',
         coords: "13.7405, 100.5095",
-        image: "https://plus.unsplash.com/premium_photo-1664472659345-3ae6244f7771?auto=format&fit=crop&q=80&w=300", // Noodle like
+        image: "/images/shops/lb-guay-jub-ouan.jpg", // Noodle like
         description: "ก๋วยจั๊บน้ำใสในตำนาน เผ็ดร้อนพริกไทย การันตีความอร่อยด้วย Michelin Bib Gourmand",
         recommendedItem: "ก๋วยจั๊บน้ำใส (Crispy Pork Soup)"
     },
@@ -86,7 +86,7 @@ export const MOCK_LOCAL_BUSINESSES: LocalBusiness[] = [
         name: "ขนมปังเจ้าอร่อยเด็ดเยาวราช",
         type: 'food',
         coords: "13.7410, 100.5085",
-        image: "https://images.unsplash.com/photo-1619623635582-730c4e09f538?auto=format&fit=crop&q=80&w=300", // Bread/Bun
+        image: "/images/shops/lb-yaowarat-toast.jpg", // Bread/Bun
         description: "ขนมปังปิ้งไส้ทะลักในตำนาน คิวยาวตลอดคืน กรอบนอกนุ่มใน",
         recommendedItem: "ขนมปังราดสังขยาใบเตย"
     },
@@ -97,7 +97,7 @@ export const MOCK_LOCAL_BUSINESSES: LocalBusiness[] = [
         name: "Mango Tango",
         type: 'drink',
         coords: "13.7448, 100.5349",
-        image: "https://images.unsplash.com/photo-1547516508-4c1f9c7c47ee?auto=format&fit=crop&q=80&w=300",
+        image: "/images/shops/lb-mango-tango.jpg",
         description: "คาเฟ่มะม่วงสไตล์โมเดิร์นใจกลางสยาม เมนูมะม่วงสร้างสรรค์หลากหลาย",
         recommendedItem: "สมูทตี้มะม่วง (Mango Smoothie)"
     }
