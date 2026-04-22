@@ -1,0 +1,78 @@
+{
+  "Home": {
+    "tagline": "✈️ Travel the Thai Series Way",
+    "heading1": "Turn Memorable Scenes",
+    "heading2": "Into a Journey",
+    "description": "Discover filming locations from your favorite series. Pin coordinates and travel to feel the real atmosphere beyond the screen.",
+    "exploreParams": "Start Exploring",
+    "about": "About StoryMap",
+    "stats": {
+      "series": "Hit Series",
+      "locations": "Location Pins",
+      "travelers": "Travelers"
+    },
+    "features": {
+      "title": "Why StoryMap?",
+      "subtitle": "We make series tracking easier and more fun with features designed especially for fans.",
+      "f1Title": "Accurate Locations",
+      "f1Desc": "No need to search blindly. We pin exact filming spots with Google Maps navigation.",
+      "f2Title": "In-Depth Info",
+      "f2Desc": "Learn behind-the-scenes facts and memorable scenes of each location.",
+      "f3Title": "Fan Community",
+      "f3Desc": "Share photos, reviews, and impressions with friends around the world."
+    },
+    "trending": {
+      "badge": "Most Popular",
+      "title": "Top Series of the Week",
+      "viewAll": "View All"
+    },
+    "highlights": {
+      "title": "Highlights of the Week",
+      "recommended": "Recommended",
+      "noHighlight": "No highlight available",
+      "comingSoon": "Coming Soon",
+      "moreTitle": "And Many More!",
+      "moreDesc": "Discover over 100+ locations across Thailand",
+      "viewAll": "View All"
+    },
+    "cta": {
+      "title": "Ready to step out of the screen?",
+      "subtitle": "Join thousands of travelers who are exploring filming locations across Thailand today.",
+      "button": "Start Exploring Now"
+    }
+  },
+  "Navigation": {
+    "home": "Home",
+    "explore": "Explore",
+    "places": "Places",
+    "tools": "Tools",
+    "tripPlanner": "Trip Planner",
+    "crowdMonitor": "Crowd Monitor"
+  },
+  "Explore": {
+    "title": "Explore",
+    "subtitle": "Discover the right series, and step into the real world.",
+    "searchPlaceholder": "Search series name...",
+    "all": "All",
+    "trending": "Trending",
+    "bl": "BL Series",
+    "movies": "Movies",
+    "notFoundTitle": "No series found for \"{query}\"",
+    "notFoundSubtitle": "Try a broader search term, or clear the search.",
+    "clearSearch": "Clear Search"
+  },
+  "SeriesCard": {
+    "locations": "Locations"
+  },
+  "Contact": {
+    "backHome": "Back to Home",
+    "title": "Contact Us",
+    "subtitle": "Have a question, feedback, or need help? Send us a message.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "message": "Message",
+    "messagePlaceholder": "Write your message here...",
+    "send": "Send Message"
+  }
+}

@@ -5,9 +5,11 @@ import Link from "next/link";
 import { Menu, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { useTranslations } from "next-intl";
 
 export function MobileNav() {
     const [open, setOpen] = useState(false);
+    const t = useTranslations("Navigation");
 
     return (
         <div className="md:hidden">
@@ -26,7 +28,7 @@ export function MobileNav() {
                             StoryMap
                         </SheetTitle>
                         <SheetDescription className="text-left text-muted-foreground">
-                            เมนูนำทาง (Navigation Menu)
+                            {t('tools')}
                         </SheetDescription>
                     </SheetHeader>
                     <div className="flex flex-col gap-4 mt-8">
@@ -35,43 +37,37 @@ export function MobileNav() {
                             onClick={() => setOpen(false)}
                             className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                         >
-                            หน้าหลัก (Home)
+                            {t('home')}
                         </Link>
                         <Link
                             href="/explore"
                             onClick={() => setOpen(false)}
                             className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                         >
-                            สำรวจ (Explore)
+                            {t('explore')}
                         </Link>
                         <Link
                             href="/places"
                             onClick={() => setOpen(false)}
                             className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                         >
-                            สถานที่ (Places)
+                            {t('places')}
                         </Link>
                         <Link
                             href="/crowd-monitor"
                             onClick={() => setOpen(false)}
                             className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                         >
-                            ติดตามคน (Crowd Monitor)
+                            {t('crowdMonitor')}
                         </Link>
                         <Link
                             href="/trip-planner"
                             onClick={() => setOpen(false)}
                             className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                         >
-                            วางแผนเที่ยว (Trip Planner)
+                            {t('tripPlanner')}
                         </Link>
-                        <Link
-                            href="/profile"
-                            onClick={() => setOpen(false)}
-                            className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                        >
-                            โปรไฟล์ (Profile)
-                        </Link>
+
                     </div>
                 </SheetContent>
             </Sheet>

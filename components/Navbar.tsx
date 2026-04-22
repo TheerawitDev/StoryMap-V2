@@ -6,9 +6,19 @@ import { NavbarUserActions } from "./NavbarUserActions";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/components/ui/sheet";
 import { MobileNav } from "./MobileNav";
 import { NavLink } from "./NavLink";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, Map, Users } from "lucide-react";
+import { getTranslations } from "next-intl/server";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export async function Navbar() {
     const session = await auth();
+    const t = await getTranslations("Navigation");
 
     return (
         <nav className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
@@ -22,29 +32,42 @@ export async function Navbar() {
                 </Link>
 
                 {/* Desktop Navigation Links */}
-                <div className="hidden md:flex items-center gap-8">
+                <div className="hidden md:flex items-center gap-6">
                     <NavLink href="/">
-                        หน้าหลัก (Home)
+                        {t('home')}
                     </NavLink>
                     <NavLink href="/explore">
-                        สำรวจ (Explore)
+                        {t('explore')}
                     </NavLink>
                     <NavLink href="/places">
-                        สถานที่ (Places)
+                        {t('places')}
                     </NavLink>
-                    <NavLink href="/crowd-monitor">
-                        ติดตามคน (Crowd Monitor)
-                    </NavLink>
-                    <NavLink href="/trip-planner">
-                        วางแผนเที่ยว (Trip Planner)
-                    </NavLink>
-                    <NavLink href="/profile">
-                        โปรไฟล์ (Profile)
-                    </NavLink>
+                    
+                    <DropdownMenu>
+                        <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors focus:outline-none">
+                            {t('tools')} <ChevronDown className="w-4 h-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-56">
+                            <DropdownMenuItem asChild>
+                                <Link href="/trip-planner" className="cursor-pointer flex items-center py-2">
+                                    <Map className="mr-2 h-4 w-4 text-gray-500" />
+                                    <span>{t('tripPlanner')}</span>
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link href="/crowd-monitor" className="cursor-pointer flex items-center py-2">
+                                    <Users className="mr-2 h-4 w-4 text-gray-500" />
+                                    <span>{t('crowdMonitor')}</span>
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
 
                 {/* Actions */}
                 <div className="flex items-center gap-2 md:gap-4">
+                    <LanguageSwitcher />
+
                     {/* Mobile Menu */}
                     <MobileNav />
 

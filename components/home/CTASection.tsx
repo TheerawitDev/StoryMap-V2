@@ -1,10 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-
+import { ArrowRight } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
 
 export async function CTASection() {
+    const t = await getTranslations("Home.cta");
     const session = await auth();
 
     if (session?.user) {
@@ -22,19 +24,16 @@ export async function CTASection() {
                 />
             </div>
             <div className="container mx-auto px-4 relative z-10 text-center">
-                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">พร้อมออกเดินทางแล้วหรือยัง?</h2>
-                <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-10">
-                    เข้าร่วมคอมมูนิตี้ StoryMap วันนี้ แล้วเริ่มบันทึกความทรงจำการเดินทางของคุณ
-                </p>
-                <div className="flex flex-col sm:flex-row justify-center gap-4">
-                    <Link href="/register">
-                        <Button size="lg" className="h-14 px-10 rounded-full text-lg font-semibold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25">
-                            สมัครสมาชิกฟรี
-                        </Button>
-                    </Link>
-                    <Link href="/login">
-                        <Button size="lg" variant="outline" className="h-14 px-10 rounded-full text-lg font-semibold bg-transparent border-white/20 text-white hover:bg-white/10">
-                            เข้าสู่ระบบ
+                <div className="max-w-3xl mx-auto text-center relative z-10">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                        {t('title')}
+                    </h2>
+                    <p className="text-xl text-blue-100 mb-10 opacity-90">
+                        {t('subtitle')}
+                    </p>
+                    <Link href="/explore">
+                        <Button size="lg" className="h-14 px-8 bg-white text-blue-600 hover:bg-gray-50 rounded-full text-lg shadow-xl shadow-blue-900/20 hover:scale-105 transition-all">
+                            {t('button')} <ArrowRight className="ml-2 w-5 h-5" />
                         </Button>
                     </Link>
                 </div>
