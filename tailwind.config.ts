@@ -10,7 +10,7 @@ const config: Config = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ["var(--font-kanit)", "sans-serif"],
+                sans: ["var(--font-sao-chingcha)", "sans-serif"],
             },
             colors: {
                 background: 'hsl(var(--background))',
