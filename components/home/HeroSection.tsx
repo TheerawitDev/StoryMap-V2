@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 
 interface HeroStats {
@@ -11,6 +12,7 @@ interface HeroStats {
 }
 
 export function HeroSection({ stats }: { stats: HeroStats }) {
+    const t = useTranslations("Home");
     return (
         <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
             {/* Background Image / Gradient */}
@@ -37,30 +39,30 @@ export function HeroSection({ stats }: { stats: HeroStats }) {
                 <div className="max-w-4xl mx-auto text-center space-y-8">
                     <div className="inline-block animate-fade-in-up">
                         <span className="px-4 py-2 rounded-full bg-blue-50 text-primary text-sm font-semibold tracking-wide border border-blue-100 shadow-sm">
-                            ✈️ ท่องเที่ยวตามรอยซีรีส์ไทย
+                            {t('tagline')}
                         </span>
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-bold text-gray-900 tracking-tight leading-[1.1] animate-fade-in-up delay-100 drop-shadow-sm">
-                        เปลี่ยนฉากประทับใจ<br />
+                        {t('heading1')}<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-primary drop-shadow-sm">
-                            ให้กลายเป็นการเดินทาง
+                            {t('heading2')}
                         </span>
                     </h1>
 
                     <p className="text-xl md:text-2xl text-gray-800 font-medium max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-200 drop-shadow-sm">
-                        ค้นพบสถานที่ถ่ายทำจากซีรีส์เรื่องโปรด ปักหมุดพิกัด แล้วออกเดินทางไปสัมผัสบรรยากาศจริงที่ไม่ได้มีแค่ในจอ
+                        {t('description')}
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-fade-in-up delay-300">
                         <Link href="/explore">
                             <Button size="lg" className="h-14 px-8 rounded-full text-lg shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all hover:-translate-y-1">
-                                เริ่มสำรวจสถานที่ <ArrowRight className="ml-2 w-5 h-5" />
+                                {t('exploreParams')} <ArrowRight className="ml-2 w-5 h-5" />
                             </Button>
                         </Link>
                         <Link href="/about">
                             <Button variant="outline" size="lg" className="h-14 px-8 rounded-full text-lg bg-white/50 backdrop-blur-sm border-gray-200 hover:bg-white hover:border-gray-300 transition-all">
-                                รู้จัก StoryMap
+                                {t('about')}
                             </Button>
                         </Link>
                     </div>
@@ -69,15 +71,15 @@ export function HeroSection({ stats }: { stats: HeroStats }) {
                     <div className="pt-12 grid grid-cols-3 divide-x divide-gray-200/50 animate-fade-in-up delay-400">
                         <div>
                             <div className="text-3xl font-bold text-gray-900">{stats.seriesCount}+</div>
-                            <div className="text-sm text-gray-500 mt-1">ซีรีส์ยอดฮิต</div>
+                            <div className="text-sm text-gray-500 mt-1">{t('stats.series')}</div>
                         </div>
                         <div>
                             <div className="text-3xl font-bold text-gray-900">{stats.locationCount}+</div>
-                            <div className="text-sm text-gray-500 mt-1">พิกัดสถานที่</div>
+                            <div className="text-sm text-gray-500 mt-1">{t('stats.locations')}</div>
                         </div>
                         <div>
                             <div className="text-3xl font-bold text-gray-900">{stats.userCount > 1000 ? (stats.userCount / 1000).toFixed(0) + 'k' : stats.userCount}+</div>
-                            <div className="text-sm text-gray-500 mt-1">นักเดินทาง</div>
+                            <div className="text-sm text-gray-500 mt-1">{t('stats.travelers')}</div>
                         </div>
                     </div>
                 </div>
