@@ -74,5 +74,106 @@
     "message": "Message",
     "messagePlaceholder": "Write your message here...",
     "send": "Send Message"
+  },
+  "Footer": {
+    "description": "A platform for movie and series lovers. Follow real filming locations around the world and open up new travel experiences.",
+    "explore": {
+      "title": "Explore",
+      "popularSeries": "Popular Series",
+      "landmarks": "Landmarks",
+      "addYourSeries": "Add Your Series",
+      "recommendedCollections": "Recommended Collections"
+    },
+    "company": {
+      "title": "Company",
+      "aboutUs": "About Us",
+      "careers": "Careers",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Use"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Get updates on new filming locations before anyone else.",
+      "placeholder": "Your Email",
+      "button": "Subscribe"
+    },
+    "copyright": "© {year} StoryMap. All rights reserved."
+  },
+  "Placeholders": {
+    "back": "Back",
+    "comingSoon": "Coming Soon",
+    "collectionsDesc": "Curated collections of filming locations are coming soon. Stay tuned!",
+    "careersDesc": "I am open to working with anyone! If you'd like to collaborate or contact me, please reach out at pm.theerawit@gmail.com.",
+    "termsDesc": "Our Terms of Use are currently being updated and will be available shortly."
+  },
+  "Terms": {
+    "title": "Terms of Use",
+    "lastUpdated": "Last updated: July 2026",
+    "intro": "Welcome to StoryMap. By accessing or using our platform, you agree to be bound by these Terms of Use and our Privacy Policy.",
+    "sections": {
+      "1": {
+        "title": "1. Acceptance of Terms",
+        "content": "By creating an account or using StoryMap, you agree to comply with and be legally bound by these terms. If you do not agree to these terms, you have no right to obtain information from or otherwise continue using the platform."
+      },
+      "2": {
+        "title": "2. User-Generated Content",
+        "content": "Users may submit locations, reviews, and images. You retain ownership of your content, but you grant StoryMap a worldwide, non-exclusive, royalty-free license to use, reproduce, and display your content in connection with the service. You agree not to post content that is illegal, offensive, or infringes on third-party rights."
+      },
+      "3": {
+        "title": "3. Account Responsibilities",
+        "content": "You are responsible for maintaining the confidentiality of your account login information and are fully responsible for all activities that occur under your account. StoryMap cannot and will not be liable for any loss or damage arising from your failure to comply with this obligation."
+      },
+      "4": {
+        "title": "4. Intellectual Property",
+        "content": "All platform content, including but not limited to text, graphics, logos, and software, is the property of StoryMap or its content suppliers and protected by international copyright laws."
+      },
+      "5": {
+        "title": "5. Limitation of Liability",
+        "content": "StoryMap is provided on an 'as is' basis without warranties of any kind. We do not guarantee the accuracy of any user-submitted locations or information."
+      }
+    }
+  },
+  "About": {
+    "title": "About Us",
+    "intro": "StoryMap is a platform that connects the stories in your favorite series to real-world locations, letting you explore and experience those atmospheres yourself.",
+    "sections": {
+      "1": {
+        "title": "Our Mission",
+        "content": "We believe every place has a story, and series bring those places to life. We want to help fans follow in the footsteps of their favorite characters and create new memories."
+      },
+      "2": {
+        "title": "Our Team",
+        "content": "We are a group of people who love watching series and traveling, just like you! We built StoryMap to be your travel companion."
+      }
+    }
+  },
+  "Privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: July 2026",
+    "intro": "StoryMap values your privacy. This policy explains how we collect, use, and disclose your personal information.",
+    "infoCollectTitle": "Information We Collect",
+    "infoCollectItems": [
+      "User account information (name, email) from Google Login",
+      "Locations and series data submitted by you",
+      "Your browsing and check-in history"
+    ],
+    "infoUseTitle": "How We Use Information",
+    "infoUseIntro": "We use your information to:",
+    "infoUseItems": [
+      "Provide and improve website experience",
+      "Show progress and rewards on your profile",
+      "Communicate about updates (if any)"
+    ],
+    "note": "*This is a sample policy for demonstration only*"
+  },
+  "Careers": {
+    "title": "Careers",
+    "intro": "We are always open to new opportunities and collaborations.",
+    "sections": {
+      "1": {
+        "title": "Let's Collaborate",
+        "content": "If you'd like to collaborate or have any inquiries, please reach out to us at pm.theerawit@gmail.com."
+      }
+    }
   }
 }

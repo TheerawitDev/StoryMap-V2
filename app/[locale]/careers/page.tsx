@@ -2,8 +2,8 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
-export default function AboutPage() {
-    const t = useTranslations("About");
+export default function CareersPage() {
+    const t = useTranslations("Careers");
     const tPlaceholders = useTranslations("Placeholders");
     return (
         <div className="container mx-auto px-4 py-12 max-w-4xl">
@@ -21,7 +21,7 @@ export default function AboutPage() {
                         {t("intro")}
                     </p>
 
-                    {[1, 2].map((section) => (
+                    {[1].map((section) => (
                         <div key={section} className="mb-8">
                             <h2 className="text-xl font-bold text-gray-900 mb-4">
                                 {t(`sections.${section}.title`)}
