@@ -37,11 +37,6 @@ export function HeroSection({ stats }: { stats: HeroStats }) {
 
             <div className="container px-4 z-10 pt-20">
                 <div className="max-w-4xl mx-auto text-center space-y-8">
-                    <div className="inline-block animate-fade-in-up">
-                        <span className="px-4 py-2 rounded-full bg-blue-50 text-primary text-sm font-semibold tracking-wide border border-blue-100 shadow-sm">
-                            {t('tagline')}
-                        </span>
-                    </div>
 
                     <h1 className="text-5xl md:text-7xl font-bold text-gray-900 tracking-tight leading-[1.1] animate-fade-in-up delay-100 drop-shadow-sm">
                         {t('heading1')}<br />
